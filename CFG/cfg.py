@@ -12,42 +12,45 @@ class Opt: # Optional
     def __init__(self, order:Ordering, optional:bool=True) -> None:
         self.order = order
         self.optional = optional
+        
+RULES_DICT = {}
 
 
-HEAD_NOUN = Ordering(pos.HEAD_NOUN)
-NOUN = Ordering(pos.NOUN)
-VERB = Ordering(pos.VERB)
-ADJECTIVE = Ordering(pos.ADJECTIVE)
-ADVERB = Ordering(pos.ADVERB)
-AUXILLARY_VERB = Ordering(pos.AUXILLARY_VERB)
-MODAL_VERB = Ordering(pos.MODAL_VERB)
-DETERMINER = Ordering(pos.DETERMINER)
-PRONOUN = Ordering(pos.PRONOUN)
-GERUNDIVE_ING = Ordering(pos.GERUNDIVE_ING)
-GERUNDIVE_ED = Ordering(pos.GERUNDIVE_ED)
-PREPOSITION = Ordering(pos.PREPOSITION)
-WH_WORD = Ordering(pos.WH)
-CARDINAL_NUMBER = Ordering(pos.CARDINAL_NUMBER)
-ORDINAL_NUMBER = Ordering(pos.ORDINAL_NUMBER)
-QUANTIFIER = Ordering(pos.QUANTIFIER)
-CONJUNCTION = Ordering(pos.CONJUNCTION)
-RECURSE = Ordering(pos.RECURSE)
+RULES_DICT[pos.HEAD_NOUN] = Ordering(pos.HEAD_NOUN)
+RULES_DICT[pos.NOUN] = Ordering(pos.NOUN)
+RULES_DICT[pos.VERB] = Ordering(pos.VERB)
+RULES_DICT[pos.ADJECTIVE] = Ordering(pos.ADJECTIVE)
+RULES_DICT[pos.ADVERB] = Ordering(pos.ADVERB)
+RULES_DICT[pos.AUXILLARY_VERB] = Ordering(pos.AUXILLARY_VERB)
+RULES_DICT[pos.HEAD_NOUN] = Ordering(pos.HEAD_NOUN)
+RULES_DICT[pos.DETERMINER] = Ordering(pos.DETERMINER)
+RULES_DICT[pos.PRONOUN] = Ordering(pos.PRONOUN)
+RULES_DICT[pos.GERUNDIVE_ING] = Ordering(pos.GERUNDIVE_ING)
+RULES_DICT[pos.GERUNDIVE_ED] = Ordering(pos.GERUNDIVE_ED)
+RULES_DICT[pos.PREPOSITION] = Ordering(pos.PREPOSITION)
+RULES_DICT[pos.WH_WORD] = Ordering(pos.WH_WORD)
+RULES_DICT[pos.CARDINAL_NUMBER] = Ordering(pos.CARDINAL_NUMBER)
+RULES_DICT[pos.ORDINAL_NUMBER] = Ordering(pos.ORDINAL_NUMBER)
+RULES_DICT[pos.QUANTIFIER] = Ordering(pos.QUANTIFIER)
+RULES_DICT[pos.CONJUNCTION] = Ordering(pos.CONJUNCTION)
 
 # SIMPLE
 VERB_PHRASE = Ordering(pos.VERB_PHRASE, set([
     [pos.VERB, pos.ADVERB]
     ]), False)
+RULES_DICT[pos.VERB_PHRASE] = VERB_PHRASE
 
 NOUN_PHRASE = Ordering(pos.NOUN_PHRASE, set([
     [pos.ADJECTIVE, pos.NOUN],
     [pos.ADJECTIVE, pos.NOUN_PHRASE]
     ]), False)
+RULES_DICT[pos.NOUN_PHRASE] = NOUN_PHRASE
 
 SENTENCE = Ordering(pos.SENTENCE, set([
     [pos.NOUN_PHRASE, pos.VERB_PHRASE],
     [pos.SENTENCE, pos.CONJUNCTION, pos.SENTENCE]
     ]), False)
-
+RULES_DICT[pos.SENTENCE] = SENTENCE
 
 # PREDETERMINER = Ordering(pos.PREDETERMINER, word=True)
 # POSTDETERMINER = Ordering(pos.POSTDETERMINER, set([
