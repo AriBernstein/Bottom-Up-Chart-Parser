@@ -1,9 +1,9 @@
 from nltk.corpus import wordnet as wn
 from part_of_speech import PartOfSpeech
-from CFG.word_constants import aux_verbs, modal_verbs, determiners, \
-                               pronouns
+from word_constants import aux_verbs, modal_verbs, determiners, \
+                           pronouns
     
-def parts_of_speech(word:str) -> set:
+def get_parts_of_speech(word:str) -> set:
     # n    noun 
     # v    verb 
     # a    adjective 

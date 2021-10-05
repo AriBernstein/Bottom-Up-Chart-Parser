@@ -10,6 +10,7 @@ class PartOfSpeech(Enum):
     VERB_PHRASE = 'verb_phrase'
     PREPOSITION_PHRASE= "preposition_phrase"
     VERB = 'verb'
+    NOMINAL = 'nominal'
     ADJECTIVE = 'adjective'
     ADVERB = 'adverb'
     AUXILLARY_VERB = 'auxillary_verb'
@@ -35,6 +36,3 @@ class PartOfSpeech(Enum):
     WH_SUBJECT_QUESTION = "wh_subject_question"
     WHY_NON_SUBJECT_QUESTION = "why_non_subject_question"
     
-    # Special type which tells parser to repeat current phrase
-    # type within said phrase-type ordering
-    RECURSE = "recurse"

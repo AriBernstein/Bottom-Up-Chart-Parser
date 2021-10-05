@@ -1,8 +1,7 @@
-from Phrases.noun_phrase import NounPhrase
 from part_of_speech import PartOfSpeech as pos
 
 class Ordering:
-    def __init__(self, part_of_speech:pos, valid_orderings: set=None, word:bool=True, composite:bool = False) -> None:
+    def __init__(self, part_of_speech:pos, valid_orderings: list[list[pos]]=None, word:bool=True, composite:bool = False) -> None:
         self.valid_orderings = valid_orderings
         self.pos = part_of_speech
         self.word = word
@@ -35,22 +34,44 @@ RULES_DICT[pos.QUANTIFIER] = Ordering(pos.QUANTIFIER)
 RULES_DICT[pos.CONJUNCTION] = Ordering(pos.CONJUNCTION)
 
 # SIMPLE
-VERB_PHRASE = Ordering(pos.VERB_PHRASE, set([
-    [pos.VERB, pos.ADVERB]
-    ]), False)
+PREPOSITION_PHRASE = Ordering(pos.PREPOSITION_PHRASE, [
+    [pos.PREPOSITION, pos.NOUN_PHRASE]
+], False)
+RULES_DICT[pos.PREPOSITION_PHRASE] = PREPOSITION_PHRASE
+
+VERB_PHRASE = Ordering(pos.VERB_PHRASE, [
+    [pos.VERB],
+    [pos.VERB, pos.NOUN_PHRASE],
+    [pos.VERB, pos.NOUN_PHRASE, pos.PREPOSITION_PHRASE],
+    [pos.VERB, pos.PREPOSITION_PHRASE],
+    [pos.VERB_PHRASE, pos.PREPOSITION_PHRASE]    
+    ], False)
 RULES_DICT[pos.VERB_PHRASE] = VERB_PHRASE
 
-NOUN_PHRASE = Ordering(pos.NOUN_PHRASE, set([
-    [pos.ADJECTIVE, pos.NOUN],
-    [pos.ADJECTIVE, pos.NOUN_PHRASE]
-    ]), False)
+NOMINAL = Ordering(pos.NOMINAL, [
+    [pos.NOUN],
+    [pos.NOMINAL, pos.NOUN],
+    [pos.NOMINAL, pos.PREPOSITION_PHRASE]
+], False)
+RULES_DICT[pos.NOMINAL] = NOMINAL
+
+NOUN_PHRASE = Ordering(pos.NOUN_PHRASE, [
+    [pos.PRONOUN],
+    [pos.NOMINAL, pos.NOUN_PHRASE, pos.NOUN],
+    [pos.DETERMINER, pos.NOMINAL]
+    ], False)
 RULES_DICT[pos.NOUN_PHRASE] = NOUN_PHRASE
 
-SENTENCE = Ordering(pos.SENTENCE, set([
+SENTENCE = Ordering(pos.SENTENCE, [
+    [pos.VERB_PHRASE],
     [pos.NOUN_PHRASE, pos.VERB_PHRASE],
+    [pos.AUXILLARY_VERB, pos.NOUN_PHRASE, pos.VERB_PHRASE]
     [pos.SENTENCE, pos.CONJUNCTION, pos.SENTENCE]
-    ]), False)
+    ], False)
 RULES_DICT[pos.SENTENCE] = SENTENCE
+
+# def get_orderings(word_type:list[pos]) -> set:
+    # Return set of lists - pos_type
 
 # PREDETERMINER = Ordering(pos.PREDETERMINER, word=True)
 # POSTDETERMINER = Ordering(pos.POSTDETERMINER, set([
