@@ -1,10 +1,12 @@
-from CFG.Noun.noun_phrase_ordering import POST_MODIFIER
+from CFG.cfg import GERUNDIVE_VERBPHRASE
 from enum import Enum
 
 class PartOfSpeech(Enum):
     SENTENCE = "sentence"
     NOUN = 'noun'
     NOUN_PHRASE = 'noun_phrase'
+    NOUN_PHRASE_LEFT = 'noun_phrase_left'
+    NOUN_PHRASE_LEFT = 'noun_phrase_right'
     VERB_PHRASE = 'verb_phrase'
     PREPOSITION_PHRASE= "preposition_phrase"
     VERB = 'verb'
@@ -15,14 +17,24 @@ class PartOfSpeech(Enum):
     DETERMINER = 'determiner'
     PRONOUN = 'pronoun'
     HEAD_NOUN = 'head_noun'
-    PRE_DETERMINER = "pre_determiner"
-    POST_DETERMINER = "post_determiners"
-    POST_MODIFIER = "post_modifier"
-    POST_MODIFIER_NON_FINITE = "post_modifier_non_finite"
-    POST_NOMINAL_RELATIVE_CLAUSE = "post_nominal_relative_clause"
-    GERUNDIVE = "gerundive"
+    PREDETERMINER = "predeterminer"
+    POSTDETERMINER = "postdeterminers"
+    POSTMODIFIER = "postmodifier"
+    POSTMODIFIER_NON_FINITE = "postmodifier_non_finite"
+    POSTNOMINAL_RELATIVE_CLAUSE = "postnominal_relative_clause"
+    GERUNDIVE_ING = "gerundive_ing"
+    GERUNDIVE_ING_PHRASE = "gerundive_ing_phrase"
+    GERUNDIVE_ED = "gerundive_ed"
     PREPOSITION = "preposition"
-    WH = "wh_word"
+    WH_WORD = "wh_word"
     CARDINAL_NUMBER = "cardinal_number"
     ORDINAL_NUMBER = "ordinal_number"
     QUANTIFIER = "quantifier"
+    CONJUNCTION = "conjunction"
+    AUX_SENTENCE_QUESTION = "aux_sentence_question"
+    WH_SUBJECT_QUESTION = "wh_subject_question"
+    WHY_NON_SUBJECT_QUESTION = "why_non_subject_question"
+    
+    # Special type which tells parser to repeat current phrase
+    # type within said phrase-type ordering
+    RECURSE = "recurse"

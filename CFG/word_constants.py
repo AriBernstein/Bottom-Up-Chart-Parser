@@ -18,6 +18,12 @@ pronouns = set(
     ["I", "we", "you", "he", "she", "it", "they", "me", "us", "you",
      "her", "him", "it", "them"])
 
+relative_pronouns = set(
+    ['who', 'whom', 'whose', 'which', 'that']
+)
+
+coordinators = set(
+    ['for', 'and', 'nor', 'but', 'or', 'yet', 'so'])
 
 # Numbers:
 # Cardinal Numbers:
