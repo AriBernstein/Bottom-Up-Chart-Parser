@@ -6,6 +6,16 @@ class Ordering:
         self.pos = part_of_speech
         self.word = word
         self.composite = composite
+        
+    def __iter__(self):
+        for ordering in self.valid_orderings:
+            yield ordering
+        
+    def all_orderings(self):
+        return self.valid_orderings
+    
+    def get_ordering(self, index:int):
+        return self.valid_orderings[index]
     
 class Opt: # Optional
     def __init__(self, order:Ordering, optional:bool=True) -> None:
@@ -98,11 +108,14 @@ POS_PHRASE_SET.add(RULES_DICT[pos.NOUN_PHRASE])
 SENTENCE = Ordering(pos.SENTENCE, [
     [pos.VERB_PHRASE],
     [pos.NOUN_PHRASE, pos.VERB_PHRASE],
-    [pos.AUXILLARY_VERB, pos.NOUN_PHRASE, pos.VERB_PHRASE]
+    [pos.AUXILLARY_VERB, pos.NOUN_PHRASE, pos.VERB_PHRASE],
     [pos.SENTENCE, pos.CONJUNCTION, pos.SENTENCE]
     ], False)
 RULES_DICT[pos.SENTENCE] = SENTENCE
 POS_PHRASE_SET.add(RULES_DICT[pos.SENTENCE])
+
+def get_pos_ordering(pos:pos) -> Ordering:
+    return RULES_DICT[pos]
 
 # def get_orderings(word_type:list[pos]) -> set:
     # Return set of lists - pos_type

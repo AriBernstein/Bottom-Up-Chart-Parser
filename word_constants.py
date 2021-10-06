@@ -40,10 +40,10 @@ cardinal_numbers_twenty_ninety = set(
 cardinal_numbers_hundred_trillion = set(
     ["hundred", "thousand", "million", "billion", "trillion"])
 
-cardinal_number_sets = set.union(
-    [cardinal_numbers_zero_nineteen,
-     cardinal_numbers_twenty_ninety,
-     cardinal_numbers_hundred_trillion])
+cardinal_number_sets = set().union(
+    *[cardinal_numbers_zero_nineteen,
+      cardinal_numbers_twenty_ninety,
+      cardinal_numbers_hundred_trillion])
 
 # Ordinal numbers
 ordinal_number_set = set(

@@ -1,12 +1,12 @@
-from CFG.cfg import GERUNDIVE_VERBPHRASE
 from enum import Enum
+import re
 
 class PartOfSpeech(Enum):
     SENTENCE = "sentence"
     NOUN = 'noun'
     NOUN_PHRASE = 'noun_phrase'
     NOUN_PHRASE_LEFT = 'noun_phrase_left'
-    NOUN_PHRASE_LEFT = 'noun_phrase_right'
+    NOUN_PHRASE_RIGHT = 'noun_phrase_right'
     VERB_PHRASE = 'verb_phrase'
     PREPOSITION_PHRASE= "preposition_phrase"
     VERB = 'verb'
@@ -35,4 +35,7 @@ class PartOfSpeech(Enum):
     AUX_SENTENCE_QUESTION = "aux_sentence_question"
     WH_SUBJECT_QUESTION = "wh_subject_question"
     WHY_NON_SUBJECT_QUESTION = "why_non_subject_question"
+    
+    def __str__(self) -> str:
+        return re.sub(r"[_]", " ", str(self.value))
     
