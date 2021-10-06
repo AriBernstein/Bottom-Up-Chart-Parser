@@ -16,6 +16,9 @@ def _incomplete_phrases_starting_with(pos:pos, prev:set[Phrase]) -> list[list[In
 
 
 def _all_permutations(new_permutations: list[set[Phrase]]) -> list[list[Phrase]]:
+    seen = set()
+    
+    
     pass
 
 

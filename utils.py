@@ -68,11 +68,7 @@ def initial_phrase_pos_permutations(sentence:str) -> set[list[Phrase]]:
                 updated_permutations.append(updated_ordering)
                 
         permutations = updated_permutations
-    
-    
-    return permutations
-                
-    
+    return permutations    
 
 if __name__ == "__main__":
     # lst = wn.synsets('morning')

@@ -4,14 +4,18 @@ from part_of_speech import PartOfSpeech as pos
 
 class Phrase:
     
-    def __init__(self, phrase:str, pos:pos, root=False, leaf=False, children=None, prev=None):
-        self.phrase = phrase   
+    def __init__(self, phrase:str, pos:pos, root=False, leaf=False, children=None, prev=None, ordering_index:int=None):
+        self.phrase = phrase
         self.root = root
         self.pos = pos
         self.leaf = leaf
         self.next = set()
         self.prev = None
         self.children = children
+        self.ordering_index = ordering_index
+        
+        if not leaf and ordering_index == None:
+            raise Exception("Only word parts of speech may have None ordering_index")
         
     def get_order(self) -> list[pos]:
         ret = []
@@ -83,7 +87,7 @@ class IncompletePhrase:
     def complete(self) -> Phrase:
         new_phrase = Phrase(self.phrase_text(), self.phrase_type,
                             self.phrase_type==pos.SENTENCE, False,
-                            self.children, self.prev)
+                            self.children, self.prev, self.cur_order)
         
         # Add as next val to each of prev
         for prev_phr in new_phrase.prev:
