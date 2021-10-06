@@ -9,7 +9,7 @@ class Phrase:
         self.root = root
         self.pos = pos
         self.leaf = leaf
-        self.next = None
+        self.next = set()
         self.prev = None
         self.children = children
         
@@ -81,8 +81,13 @@ class IncompletePhrase:
             ret += ph.phrase + ' '
         
     def complete(self) -> Phrase:
-        return Phrase(self.phrase_text(), self.phrase_type,
-                      self.phrase_type==pos.SENTENCE, False, self.children, self.prev)
+        new_phrase = Phrase(self.phrase_text(), self.phrase_type,
+                            self.phrase_type==pos.SENTENCE, False,
+                            self.children, self.prev)
+        
+        # Add as next val to each of prev
+        for prev_phr in new_phrase.prev:
+            prev_phr.next.add(new_phrase)
         
     def set_prev(self, prior_phrase_set:set[Phrase]) -> None:
         self.prev = prior_phrase_set

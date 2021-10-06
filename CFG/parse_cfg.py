@@ -14,6 +14,11 @@ def _incomplete_phrases_starting_with(pos:pos, prev:set[Phrase]) -> list[list[In
                 
     return ret
 
+
+def _all_permutations(new_permutations: list[set[Phrase]]) -> list[list[Phrase]]:
+    pass
+
+
 def _build_tree_helper(permutation_set:set[list[Phrase]],
                        incomplete_phrases:set[list[IncompletePhrase]],
                        complete_tree_set:set[Phrase]) -> Phrase:
@@ -21,6 +26,8 @@ def _build_tree_helper(permutation_set:set[list[Phrase]],
     Permutation set -> set of lists containing existing orderings of phrases
     Incomplete Phrases -> sets of incomplete phrases in the process of being constructed
     """
+    # List of sets of phrases, each index correlates to 
+    discovered_phrases = []
     for permutation in permutation_set: # Iterate through lists of Phrase objects
         terminated_phrase_set_buffer = None
 
@@ -30,6 +37,9 @@ def _build_tree_helper(permutation_set:set[list[Phrase]],
             incomplete_phrases.update([_incomplete_phrases_starting_with(phrase.pos)])
             
             terminating_phrase_set_buffer = set()
+            
+            cur_discovered_phrases = set()
+            
             # For each incomplete phrase, remove if invalid, update otherwise
             for incomplete_phrase in incomplete_phrases.copy():
                 if incomplete_phrase.expected_phrase() != Phrase:
@@ -45,11 +55,13 @@ def _build_tree_helper(permutation_set:set[list[Phrase]],
                     newly_validated_phrase = incomplete_phrase.complete()
                     incomplete_phrases.remove(incomplete_phrase)
                     terminating_phrase_set_buffer.add(newly_validated_phrase)
+                    cur_discovered_phrases.add(newly_validated_phrase)
                     continue
                 
                 incomplete_phrase.advance()
             
             terminated_phrase_set_buffer = terminating_phrase_set_buffer
+            discovered_phrases.append(cur_discovered_phrases)
                     
     
 def build_tree(sentence:str, valid_pos:set) -> Phrase:
