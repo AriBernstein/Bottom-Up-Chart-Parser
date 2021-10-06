@@ -4,7 +4,7 @@ from nltk.corpus import wordnet as wn
 from part_of_speech import PartOfSpeech
 from word_constants import aux_verbs, modal_verbs, determiners, \
                            pronouns
-    
+                               
 def get_parts_of_speech(word:str) -> set:
     # n    noun 
     # v    verb 
@@ -78,7 +78,14 @@ if __name__ == "__main__":
     # lst = wn.synsets('morning')
     # for i in range(len(lst)):
     #     print(str(lst[i].pos()))
-    pe = initial_phrase_pos_permutations("Book that flight!")
-    # print(pe)
-    for i in pe:
-        print(i)
+
+
+    # pe = initial_phrase_pos_permutations("Book that flight!")
+    # # print(pe)
+    # for i in pe:
+    #     print(i)
+        
+    # x = incomplete_phrases_starting_with(PartOfSpeech.VERB_PHRASE)
+    # for i in x:
+    #     print(i)
+    pass

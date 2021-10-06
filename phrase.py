@@ -4,14 +4,14 @@ from part_of_speech import PartOfSpeech as pos
 
 class Phrase:
     
-    def __init__(self, phrase:str, pos:pos, root=False, leaf=False, child_ordering=None):
+    def __init__(self, phrase:str, pos:pos, root=False, leaf=False, children=None):
         self.phrase = phrase   
         self.root = root
         self.pos = pos
         self.leaf = leaf
         self.next = None
         self.prev = None
-        self.children = child_ordering
+        self.children = children
         
     def get_order(self) -> list[pos]:
         ret = []
@@ -26,7 +26,7 @@ class Phrase:
         return self.children
     
     def __str__(self) -> str:
-        return f"{str(self.pos).upper()}({self.phrase})>"
+        return f"{str(self.pos).upper()}({self.phrase})|"
         
     def __repr__(self) -> str:
         return str(self)
@@ -47,7 +47,7 @@ class PhraseChildren:
                 ret = ret + " -> "
         return ret
         
-class PhraseProgress:
+class IncompletePhrase:
     def __init__(self, phrase_type:pos, cur_order:int, cur_loc:int) -> None:
         self.phrase_type = phrase_type
         self.cur_order = cur_order
@@ -80,4 +80,7 @@ class PhraseProgress:
         return Phrase(self.phrase_text(), self.phrase_type==pos.SENTENCE, self.phrase_type)
         
     def __str__(self) -> str:
-        return f"POS: {self.phrase_type}\tOrdering: {self.cur_order}\tLocation: {self.cur_loc}"
+        return f"POS: {self.phrase_type} - Ordering: {self.cur_order} - Location: {self.cur_loc}|"
+    
+    def __repr__(self) -> str:
+        return str(self)
