@@ -1,6 +1,6 @@
 from phrase import Phrase, PhraseChildren, IncompletePhrase
 from utils import initial_phrase_pos_permutations
-import part_of_speech as pos
+from part_of_speech import PartOfSpeech as pos
 from CFG import cfg
 
 def _incomplete_phrases_starting_with(pos:pos, prev:set[Phrase]) -> list[list[IncompletePhrase]]:
@@ -16,15 +16,22 @@ def _incomplete_phrases_starting_with(pos:pos, prev:set[Phrase]) -> list[list[In
 
 
 def _all_permutations(new_permutations: list[set[Phrase]]) -> list[list[Phrase]]:
-    seen = set()
+    """
+    Ordered set by where phrases start
+    """
+
+    all_permutations = []
+    seen_permutations = set()
+    
+    current_order = []
     
     
-    pass
+        
 
 
 def _build_tree_helper(permutation_set:set[list[Phrase]],
-                       incomplete_phrases:set[list[IncompletePhrase]],
-                       complete_tree_set:set[Phrase]) -> Phrase:
+                       incomplete_phrases:list[IncompletePhrase],
+                       sentences:set[Phrase]) -> Phrase:
     """
     Permutation set -> set of lists containing existing orderings of phrases
     Incomplete Phrases -> sets of incomplete phrases in the process of being constructed
@@ -56,15 +63,21 @@ def _build_tree_helper(permutation_set:set[list[Phrase]],
                 
                 if incomplete_phrase.terminal():
                     newly_validated_phrase = incomplete_phrase.complete()
-                    incomplete_phrases.remove(incomplete_phrase)
+
                     terminating_phrase_set_buffer.add(newly_validated_phrase)
+                    if newly_validated_phrase.pos == pos.SENTENCE:
+                        sentences.add(newly_validated_phrase)
                     cur_discovered_phrases.add(newly_validated_phrase)
+                        
+                    incomplete_phrases.remove(incomplete_phrase)
                     continue
                 
                 incomplete_phrase.advance()
             
             terminated_phrase_set_buffer = terminating_phrase_set_buffer
-            discovered_phrases.append(cur_discovered_phrases)
+            
+            discovered_phrases.append(
+                sorted(cur_discovered_phrases, key=lambda phr: len(phr)))
                     
     
 def build_tree(sentence:str, valid_pos:set) -> Phrase:

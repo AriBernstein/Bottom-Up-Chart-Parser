@@ -15,7 +15,7 @@ class Phrase:
         self.ordering_index = ordering_index
         
         if not leaf and ordering_index == None:
-            raise Exception("Only word parts of speech may have None ordering_index")
+            raise Exception("Only word parts of speech may have None ordering_index.")
         
     def get_order(self) -> list[pos]:
         ret = []
@@ -29,11 +29,26 @@ class Phrase:
     def get_children(self):
         return self.children
     
+    def has_prev(self) -> bool:
+        if self.prev != None:
+            if len(self.prev) > 0:
+                return True
+        return False
+    
+    def has_next(self):
+        return len(self.next) > 0
+    
+    def add_next(self, next_phr:Phrase) -> None:
+        self.next.add(next_phr)
+    
     def __str__(self) -> str:
-        return f"{str(self.pos).upper()}({self.phrase})|"
+        return f"{str(self.pos).upper()}({self.phrase}) | "
         
     def __repr__(self) -> str:
         return str(self)
+    
+    def __len__(self):
+        return len(self.children)
     
 class PhraseChildren:
     def __init__(self, ordering:List[Phrase]) -> None:
@@ -50,6 +65,7 @@ class PhraseChildren:
             if i < len(self.ordering) - 1:
                 ret = ret + " -> "
         return ret
+    
         
 class IncompletePhrase:
     def __init__(self, phrase_type:pos, cur_order:int, cur_loc:int) -> None:
@@ -91,13 +107,12 @@ class IncompletePhrase:
         
         # Add as next val to each of prev
         for prev_phr in new_phrase.prev:
-            prev_phr.next.add(new_phrase)
+            prev_phr.add_next(new_phrase)
+            
+        return new_phrase
         
     def set_prev(self, prior_phrase_set:set[Phrase]) -> None:
         self.prev = prior_phrase_set
-        
-    def set_next(self, next_phrase_set:set[Phrase]) -> None:
-        self.next = next_phrase_set
         
     def __str__(self) -> str:
         return f"POS: {self.phrase_type} - Ordering: {self.cur_order} - Location: {self.cur_loc}|"

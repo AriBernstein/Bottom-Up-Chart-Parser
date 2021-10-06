@@ -5,6 +5,8 @@ from part_of_speech import PartOfSpeech
 from word_constants import aux_verbs, modal_verbs, determiners, \
                            pronouns
                                
+                               
+                               
 def get_parts_of_speech(word:str) -> set:
     # n    noun 
     # v    verb 
