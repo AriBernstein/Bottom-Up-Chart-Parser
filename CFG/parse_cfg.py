@@ -1,21 +1,23 @@
-# import re
+import re
 
-# from phrase import Phrase, PhraseChildren
-# from utils import get_parts_of_speech
-# import part_of_speech as pos
-# from cfg import *
+from phrase import Phrase, PhraseChildren
+from utils import initial_phrase_pos_permutations
+import part_of_speech as pos
+import cfg
 
-# def tree_helper(sentence_subset:list[str], current_phrase_ordering:list) -> Phrase:
-     
-# def build_tree(phrase:str, valid_pos:set) -> Phrase:
+def _build_tree_helper(permutation_set:set(list), complete_tree_set:set(Phrase)) -> Phrase:
+    for permutation in permutation_set:
+        if len(permutation) == 1:
+            complete_tree_set.add(permutation[0])
     
-#     # First pass - instantiate list of word phrases
-#     for word in phrase.split(sep=' '):  # Remove commas, colons, semicolons, slashes
-#         word_pos = get_parts_of_speech(re.sub(r'[,:;/]',"", word))
-#         leaves.append(Phrase(word, word_pos))
+        # for pos_phrase in permutation:
             
     
-#     # Second pass - build tree of Phrase orderings. When an ordering hits a terminal, 
-#     valid_trees = []
-#     for word, i in enumerate(leaves):
-        
+def build_tree(sentence:str, valid_pos:set) -> Phrase:
+    
+    # Instantiate lists of permutations of word phrases
+    valid_permutations = initial_phrase_pos_permutations(sentence)
+    
+    sentences = set()
+    
+    _build_tree_helper(valid_permutations, sentences)

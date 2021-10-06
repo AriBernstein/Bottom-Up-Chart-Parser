@@ -14,7 +14,7 @@ class Ordering:
     def all_orderings(self):
         return self.valid_orderings
     
-    def get_ordering(self, index:int):
+    def get_order(self, index:int):
         return self.valid_orderings[index]
     
 class Opt: # Optional
@@ -114,8 +114,11 @@ SENTENCE = Ordering(pos.SENTENCE, [
 RULES_DICT[pos.SENTENCE] = SENTENCE
 POS_PHRASE_SET.add(RULES_DICT[pos.SENTENCE])
 
-def get_pos_ordering(pos:pos) -> Ordering:
+def get_ordering(pos:pos) -> Ordering:
     return RULES_DICT[pos]
+
+def get_order(pos:pos, ordering_index:int) -> list[pos]:
+    return RULES_DICT[pos].get_order(ordering_index)
 
 # def get_orderings(word_type:list[pos]) -> set:
     # Return set of lists - pos_type

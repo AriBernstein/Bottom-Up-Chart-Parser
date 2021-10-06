@@ -52,9 +52,10 @@ def get_parts_of_speech(word:str) -> set:
         
     return part_of_speech_set
 
-def phrase_pos_permutations(sentence:str) -> list[list[Phrase]]:
+def initial_phrase_pos_permutations(sentence:str) -> list[list[Phrase]]:
     permutations = [[]]
-    for word in sentence.split(sep=' '):  # Remove commas, colons, semicolons, slashes
+    for word in sentence.split(sep=' '):
+        word = re.sub(r"[:;!?/,]", "", word).lower()
         word_pos = get_parts_of_speech(word.lower())
         updated_permutations = []
         
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     # lst = wn.synsets('morning')
     # for i in range(len(lst)):
     #     print(str(lst[i].pos()))
-    pe = phrase_pos_permutations("Book a flight!")
+    pe = initial_phrase_pos_permutations("Book that flight!")
     # print(pe)
     for i in pe:
         print(i)
