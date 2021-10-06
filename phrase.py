@@ -4,13 +4,17 @@ from part_of_speech import PartOfSpeech as pos
 
 class Phrase:
     
-    def __init__(self, phrase:str, pos:pos, root=False, leaf=False, children=None, prev=None, ordering_index:int=None):
+    def __init__(self, phrase:str, pos:pos, input_string_start_index:int,
+                 input_string_end_index:int, root=False, leaf=False,
+                 children=None, prev=None, ordering_index:int=None):
         self.phrase = phrase
-        self.root = root
         self.pos = pos
+        self.input_str_start_index = input_string_start_index
+        self.input_str_end_index = input_string_end_index
+        self.root = root
         self.leaf = leaf
         self.next = set()
-        self.prev = None
+        self.prev = prev
         self.children = children
         self.ordering_index = ordering_index
         
@@ -38,11 +42,11 @@ class Phrase:
     def has_next(self):
         return len(self.next) > 0
     
-    def add_next(self, next_phr:Phrase) -> None:
+    def add_next(self, next_phr) -> None:
         self.next.add(next_phr)
     
     def __str__(self) -> str:
-        return f"{str(self.pos).upper()}({self.phrase}) | "
+        return f"{str(self.pos).upper()} ({self.phrase}) | "
         
     def __repr__(self) -> str:
         return str(self)
@@ -50,28 +54,14 @@ class Phrase:
     def __len__(self):
         return len(self.children)
     
-class PhraseChildren:
-    def __init__(self, ordering:List[Phrase]) -> None:
-        self.ordering = ordering
-        
-    def __iter__(self):
-        for ph in self.ordering:
-            yield ph
-            
-    def __str__(self) -> str:
-        ret = ""
-        for i, phrase in enumerate(self.ordering):
-            ret = ret + str(phrase)
-            if i < len(self.ordering) - 1:
-                ret = ret + " -> "
-        return ret
     
-        
 class IncompletePhrase:
-    def __init__(self, phrase_type:pos, cur_order:int, cur_loc:int) -> None:
+    def __init__(self, phrase_type:pos, cur_order:int, cur_loc:int,
+                 input_str_start_index:int) -> None:
         self.phrase_type = phrase_type
         self.cur_order = cur_order
         self.cur_loc = cur_loc
+        self.input_string_start_index = input_str_start_index
         self.children = []  # List of completed phrases
         self.prev = None
         self.next = None
@@ -100,8 +90,9 @@ class IncompletePhrase:
         for ph in self.children:
             ret += ph.phrase + ' '
         
-    def complete(self) -> Phrase:
+    def complete(self, end_index:int) -> Phrase:
         new_phrase = Phrase(self.phrase_text(), self.phrase_type,
+                            
                             self.phrase_type==pos.SENTENCE, False,
                             self.children, self.prev, self.cur_order)
         
