@@ -52,7 +52,7 @@ def get_parts_of_speech(word:str) -> set:
         
     return part_of_speech_set
 
-def initial_phrase_pos_permutations(sentence:str) -> list[list[Phrase]]:
+def initial_phrase_pos_permutations(sentence:str) -> set[list[Phrase]]:
     permutations = [[]]
     for word in sentence.split(sep=' '):
         word = re.sub(r"[:;!?/,]", "", word).lower()
