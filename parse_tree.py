@@ -1,6 +1,5 @@
 
 
-import re
 from utils import phrase_string_to_word_list
 from phrase import Phrase
 
@@ -47,7 +46,6 @@ class ParseTree:
                 current_phrase_permutations.append(extended_permutation)
                 
         return current_phrase_permutations
-            
         
     
     def get_permutations(self) -> list[list[Phrase]]:

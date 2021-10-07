@@ -1,8 +1,34 @@
-from phrase import Phrase, PhraseChildren, IncompletePhrase
-from utils import initial_phrase_pos_permutations
+from phrase import Phrase, IncompletePhrase
+from utils import get_parts_of_speech, phrase_string_to_word_list
 from part_of_speech import PartOfSpeech as pos
 from CFG import cfg
 from parse_tree import ParseTree
+
+def _initial_phrase_pos_permutations(sentence:str) -> set[list[Phrase]]:
+    permutations = [[]]
+    
+    starts, ends = {}, {}
+    
+    for i, word in enumerate(phrase_string_to_word_list(sentence)):
+        word_pos = get_parts_of_speech(word.lower())
+        updated_permutations = []
+        starts[i] = []
+        ends[i] = []
+
+        for pos in word_pos:
+            new_word_phrase = Phrase(word, pos, i, i, False, True)
+            starts[i].append(new_word_phrase)
+            ends[i].append(new_word_phrase)
+            for perm in permutations:
+                updated_ordering = perm.copy()
+                new_word_phrase = Phrase(word, pos, i, i, False, True)
+                updated_ordering.append(new_word_phrase)
+                updated_permutations.append(updated_ordering)
+                
+        permutations = updated_permutations
+    
+    return permutations, ParseTree(starts, ends, sentence)
+
 
 def _incomplete_phrases_starting_with(pos:pos, current_index) -> list[IncompletePhrase]:
     """
@@ -84,13 +110,24 @@ def _build_tree_helper(permutation_set:set[list[Phrase]],
                 sorted(cur_discovered_phrases, key=lambda phr: len(phr)))
                     
     
-def build_tree(sentence:str, valid_pos:set) -> Phrase:
+def build_tree(sentence:str) -> Phrase:
     
     # Instantiate lists of permutations of word phrases
-    valid_permutations, current_tree = initial_phrase_pos_permutations(sentence)
+    valid_permutations, current_tree = _initial_phrase_pos_permutations(sentence)
+    perms = current_tree.get_permutations()
+    for i in perms:
+        print(i)
+        
+    # print("-------")
+    # for i in valid_permutations:
+    #     print(i)
+        
+    print("---------------")
+    print(current_tree.starts)
     
-    n = len(valid_permutations[0])
+    print(current_tree.ends)
+    # n = len(valid_permutations[0])
     
-    sentences = set()
+    # sentences = set()
     
-    _build_tree_helper(valid_permutations, sentences)
+    # _build_tree_helper(valid_permutations, sentences)

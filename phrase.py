@@ -46,7 +46,7 @@ class Phrase:
         self.next.add(next_phr)
     
     def __str__(self) -> str:
-        return f"{str(self.pos).upper()} ({self.phrase}) | "
+        return f"{str(self.pos).upper()} ({self.phrase}) "
         
     def __repr__(self) -> str:
         return str(self)
@@ -90,9 +90,10 @@ class IncompletePhrase:
         for ph in self.children:
             ret += ph.phrase + ' '
         
-    def complete(self, end_index:int) -> Phrase:
+    def complete(self, input_string_end_index:int) -> Phrase:
         new_phrase = Phrase(self.phrase_text(), self.phrase_type,
-                            
+                            self.input_string_start_index,
+                            input_string_end_index,
                             self.phrase_type==pos.SENTENCE, False,
                             self.children, self.prev, self.cur_order)
         
