@@ -10,24 +10,28 @@ class ParseTree:
         self.ends = end_dict
         self.sentence_str = sentence
         self.sentence_lst = phrase_string_to_word_list(sentence)
-        self.root = self.find_root()
+        self.root = self._find_root()
         
-    def find_root(self) -> Phrase:
+    def _find_root(self) -> Phrase:
         pass
         
-    def phrases_starting_at_index(self, index:int):
+    def phrases_starting_at_index(self, index:int) -> list[Phrase]:
         return self.starts[index]
     
-    def phrases_ending_at_index(self, index:int):
+    def phrases_ending_at_index(self, index:int) -> list[Phrase]:
         return self.ends[index]
     
     def get_root(self) -> Phrase:
         return self.root
     
+    def add_phrase(self, phr:Phrase) -> None:
+        self.starts[phr.start_index].append(phr)
+        self.ends[phr.end_index].append(phr)
+            
     def _traversal_helper(self, current_phrase:Phrase,
                           current_permutation:list[Phrase]=[]) -> list[list[Phrase]]:
         
-        end_index = current_phrase.input_str_end_index
+        end_index = current_phrase.end_index
         
         current_permutation = current_permutation.copy()
         current_permutation.append(current_phrase)
