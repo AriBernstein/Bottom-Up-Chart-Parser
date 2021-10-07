@@ -3,10 +3,10 @@ from part_of_speech import PartOfSpeech as pos
 
 class Phrase:
     
-    def __init__(self, phrase:str, pos:pos, input_string_start_index:int,
+    def __init__(self, words:str, pos:pos, input_string_start_index:int,
                  input_string_end_index:int, root=False, leaf=False,
                  children=None, ordering_index:int=None):
-        self.phrase = phrase
+        self.words = words
         self.pos = pos
         self.start_index = input_string_start_index
         self.end_index = input_string_end_index
@@ -24,6 +24,9 @@ class Phrase:
             ret.append(ph.pos)
         return ret
     
+    def get_words(self):
+        return self.words
+    
     def is_word(self):
         return self.leaf
     
@@ -31,7 +34,7 @@ class Phrase:
         return self.children
     
     def __str__(self) -> str:
-        return f"{str(self.pos).upper()} ({self.phrase})"
+        return f"{str(self.pos).upper()} ({self.words})"
         
     def __repr__(self) -> str:
         return str(self)
@@ -59,7 +62,7 @@ class IncompletePhrase:
         return self.cur_loc == 0
     
     def terminal(self) -> bool:
-        ordering_list = RULES_DICT[self.phrase_type].get_ordering(self.cur_order)
+        ordering_list = RULES_DICT[self.phrase_type].get_order(self.cur_order)
         return self.cur_loc == len(ordering_list) - 1
     
     def advance(self):  # When terminal, if validated, parent becomes phrase
@@ -67,14 +70,10 @@ class IncompletePhrase:
             raise Exception("No next subphrase for phraseProgress" + str(self))
         else:
             self.cur_loc += 1
-    
-    def phrase_text(self):
-        ret = ""
-        for ph in self.children:
-            ret += ph.phrase + ' '
-        
-    def complete(self, input_string_end_index:int) -> Phrase:
-        new_phrase = Phrase(self.phrase_text(), self.phrase_type,
+            
+    def complete(self, sentence:list[str], input_string_end_index:int) -> Phrase:
+        phrase_str = sentence[self.start_index:input_string_end_index + 1]
+        new_phrase = Phrase(phrase_str, self.phrase_type,
                             self.start_index,
                             input_string_end_index,
                             self.phrase_type==pos.SENTENCE, False,
