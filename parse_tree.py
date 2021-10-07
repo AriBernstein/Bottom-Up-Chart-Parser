@@ -10,7 +10,8 @@ class ParseTree:
         self.ends = end_dict
         self.sentence_str = sentence
         self.sentence_lst = phrase_string_to_word_list(sentence)
-        self.root = self._find_root()
+        self.root = None
+        self.length = len(self.sentence_lst)
         
     def _find_root(self) -> Phrase:
         pass
@@ -24,9 +25,17 @@ class ParseTree:
     def get_root(self) -> Phrase:
         return self.root
     
+    def set_root(self, root:Phrase) -> None:
+        self.root = root
+        
+    def has_root(self) -> bool:
+        return self.root != None
+    
     def add_phrase(self, phr:Phrase) -> None:
         self.starts[phr.start_index].append(phr)
         self.ends[phr.end_index].append(phr)
+        if phr.start_index == 0 and phr.end_index == self.length - 1:
+            self.root = phr
             
     def _traversal_helper(self, current_phrase:Phrase,
                           current_permutation:list[Phrase]=[]) -> list[list[Phrase]]:
@@ -46,9 +55,8 @@ class ParseTree:
         current_phrase_permutations = []
         for next_phr in self.ends[end_index + 1]:   # For each of the phrases that start immediately after this ends
             following_permutations = self._traversal_helper(next_phr, current_permutation)  # Get list of permutations (list of phrases) 
-            for extended_permutation in following_permutations:    # for each permutation
-                current_phrase_permutations.append(extended_permutation)
-                
+            current_phrase_permutations.extend(following_permutations)
+            
         return current_phrase_permutations
         
     

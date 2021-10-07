@@ -36,54 +36,62 @@ def _incomplete_phrases_starting_with(pos:pos, current_index) -> list[Incomplete
 
 def _build_tree_helper(permutation_set:list[list[Phrase]],
                        current_tree:ParseTree,
-                       incomplete_phrases:list[IncompletePhrase]=[]) -> Phrase:
+                       incomplete_phrases:set[IncompletePhrase]=set()) -> set[list[Phrase]]:
     """
     Permutation set -> set of lists containing existing orderings of phrases
     Incomplete Phrases -> sets of incomplete phrases in the process of being constructed
     """
+    # new_starts, new_ends = {}, {}
+    
     # List of sets of phrases, each index correlates to 
-    discovered_phrases = []
     for permutation in permutation_set: # Iterate through lists of Phrase objects
         
         for cur_phrase in permutation:  # Iterate through phrase objects
                     
             # Add new potentials phrases to set
-            incomplete_phrases.extend(
+            incomplete_phrases.update(
                 _incomplete_phrases_starting_with(cur_phrase.pos, cur_phrase.start_index))
             
             # For each incomplete phrase, remove if invalid, update otherwise
             for incomplete_phrase in incomplete_phrases.copy():
+                
+                # If no match, remove form future consideration
                 if incomplete_phrase.expected_phrase() != cur_phrase:
                     incomplete_phrases.remove(incomplete_phrase)
                     continue
                 
+                # Else, add subphrase
                 incomplete_phrase.add_ordering(cur_phrase)
                 
+                # If just-added subphrase has completed its phrase:
                 if incomplete_phrase.terminal():
-                    newly_validated_phrase = incomplete_phrase.complete(cur_phrase.end_index)
-                    current_tree.add_phrase(newly_validated_phrase)
-                        
+                    completed_phrase = incomplete_phrase.complete(cur_phrase.end_index)
+                    current_tree.add_phrase(completed_phrase)
                     incomplete_phrases.remove(incomplete_phrase)
+
+                    # # Add to dictionaries for new permutations                    
+                    # if not completed_phrase.start_index in new_starts:
+                    #     new_starts[completed_phrase.start_index] = set()
+                    # new_starts[completed_phrase.start_index].add(completed_phrase)
+                    
+                    # if not completed_phrase.end_index in new_ends:
+                    #     new_ends[completed_phrase.end_index] = set()
+                    # new_ends[completed_phrase.end_index].add(completed_phrase)
+                    
                     continue
                 
-                incomplete_phrase.advance()
-            
-            
-            discovered_phrases.append(
-                sorted(cur_discovered_phrases, key=lambda phr: len(phr)))
+                incomplete_phrase.advance()    
                     
     
-def build_tree(sentence:str) -> Phrase:
+def build_tree(sentence:str) -> ParseTree:
     
     # Instantiate lists of permutations of word phrases
     current_tree = _get_base_tree(sentence)
-    valid_permutations = current_tree.get_permutations()
+    counter = 0
+    while(not current_tree.has_root()):
+        valid_permutations = current_tree.get_permutations()
+        _build_tree_helper(valid_permutations, current_tree)
+        
+        
     for i in valid_permutations:
         print(i)
-    
-    # n = len(valid_permutations[0])
-    
-    # sentences = set()
-    
-    
-    _build_tree_helper(valid_permutations, )
