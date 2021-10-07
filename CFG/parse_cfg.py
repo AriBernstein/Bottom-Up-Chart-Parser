@@ -36,11 +36,17 @@ def _incomplete_phrases_starting_with(pos:pos, current_index) -> list[Incomplete
 
 def _build_tree_helper(permutation_set:list[list[Phrase]],
                        current_tree:ParseTree,
-                       incomplete_phrases:set[IncompletePhrase]=set()) -> set[list[Phrase]]:
+                       incomplete_phrases:set[IncompletePhrase]=set(),
+                       prev_starts_dict:dict=None, prev_ends_dict:dict=None) -> list[list[Phrase]]:
     """
     Permutation set -> set of lists containing existing orderings of phrases
     Incomplete Phrases -> sets of incomplete phrases in the process of being constructed
     """
+    if prev_starts_dict == None:
+        prev_starts_dict = current_tree.starts
+    if prev_ends_dict == None:
+        prev_ends_dict = current_tree.ends
+    
     new_starts, new_ends = {}, {}
     
     # List of sets of phrases, each index correlates to 
@@ -65,7 +71,8 @@ def _build_tree_helper(permutation_set:list[list[Phrase]],
                 
                 # If just-added subphrase has completed its phrase:
                 if incomplete_phrase.terminal():
-                    completed_phrase = incomplete_phrase.complete(current_tree.sentence_lst, cur_phrase.end_index)
+                    completed_phrase = incomplete_phrase.complete(current_tree.sentence_lst,
+                                                                  cur_phrase.end_index)
                     current_tree.add_phrase(completed_phrase)
                     incomplete_phrases.remove(incomplete_phrase)
 
@@ -80,21 +87,32 @@ def _build_tree_helper(permutation_set:list[list[Phrase]],
                     
                     continue
                 
-                incomplete_phrase.advance()    
-                    
+                incomplete_phrase.advance()
+    
+    
+    for word_index in range(current_tree.num_words):
+        if not word_index in new_starts:
+            new_starts[word_index] = current_tree.starts[word_index]
+        if not word_index in new_ends:
+            new_ends[word_index] = current_tree.ends[word_index]
+    
+    return ParseTree(new_starts, new_ends, "").get_permutations()
+    
     
 def build_tree(sentence:str) -> ParseTree:
     
     # Instantiate lists of permutations of word phrases
     current_tree = _get_base_tree(sentence)
     counter = 0
+    valid_permutations = current_tree.get_permutations()
     while(not current_tree.has_root()):
-        valid_permutations = current_tree.get_permutations()
-        _build_tree_helper(valid_permutations, current_tree)
+        valid_permutations = _build_tree_helper(valid_permutations, current_tree)
         for i in valid_permutations:
             print(i)
+            
+        print("================")
 
-        if counter == 100:
+        if counter == 4:
             break
         counter += 1
         

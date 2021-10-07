@@ -11,10 +11,7 @@ class ParseTree:
         self.sentence_str = sentence
         self.sentence_lst = phrase_string_to_word_list(sentence)
         self.root = None
-        self.length = len(self.sentence_lst)
-        
-    def _find_root(self) -> Phrase:
-        pass
+        self.num_words = len(self.sentence_lst)
         
     def phrases_starting_at_index(self, index:int) -> list[Phrase]:
         return self.starts[index]
@@ -34,8 +31,8 @@ class ParseTree:
     def add_phrase(self, phr:Phrase) -> None:
         self.starts[phr.start_index].append(phr)
         self.ends[phr.end_index].append(phr)
-        if phr.start_index == 0 and phr.end_index == self.length - 1:
-            self.root = phr
+        if phr.start_index == 0 and phr.end_index == self.num_words - 1:
+            self.set_root(phr)
             
     def _traversal_helper(self, current_phrase:Phrase,
                           current_permutation:list[Phrase]=[]) -> list[list[Phrase]]:
