@@ -80,9 +80,9 @@ class Chart:
         self.incomplete_starts[arc.start_index()].add(arc)
         self.incomplete_ends[arc.end_index()].add(arc)
         
-    def update_incomplete_arc(self, arc: ActiveArc, old_end_index:int):
-        self.incomplete_ends[old_end_index].remove(arc)
-        self.incomplete_ends[arc.end_index()].add(arc)
+    def update_incomplete_arc(self, arc: ActiveArc, old_start_index:int):
+        self.incomplete_starts[old_start_index].remove(arc)
+        self.incomplete_starts[arc.start_index()].add(arc)
         
         
 class Agenda:

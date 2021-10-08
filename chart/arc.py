@@ -63,14 +63,14 @@ class ActiveArc:
         _pos (pos): [description]
         _cur_order (int): [description]
         _cur_loc (int): [description]
-        _start_index (int): [description]
+        _end_index (int): [description]
     """
     def __init__(self, pos:pos, cur_order:int, cur_loc:int,
-                 input_str_start_index:int) -> None:
+                 input_str_end_index:int) -> None:
         self._pos = pos
         self._cur_order = cur_order
         self._cur_loc = cur_loc
-        self._start_index = input_str_start_index
+        self._end_index = input_str_end_index
         
         # List of completed_arcs
         self._subsequence = [None] * len(get_pos_ordering(self._pos, cur_order))
@@ -92,7 +92,7 @@ class ActiveArc:
         return self._cur_loc == len(self._subsequence) - 1
     
     def terminal(self) -> bool:
-        return self._cur_loc == 0
+        return self._cur_loc == 0 and self._subsequence[0] != None
     
     def _advance(self):  # When terminal, if validated, parent becomes complete constituent
         if self.terminal():
@@ -101,20 +101,20 @@ class ActiveArc:
             self._cur_loc -= 1
     
     def start_index(self):
-        return self._start_index
+        return self._subsequence[self._cur_loc + 1].start_index()
     
     def end_index(self):
         if len(self._subsequence) == 0:
             raise Exception("Well this should never happen.")
         
         return self._subsequence[-1].end_index()
-            
+    
     def complete(self, sentence:list[str]) -> CompleteArc:
         if not self.terminal():
             raise Exception("Cannot convert non-terminal incomplete arc to complete arc.")
         
-        constituent_str = sentence[self._start_index:self.end_index() + 1]
-        completed_constituent = CompleteArc(constituent_str, self._pos, self._start_index,
+        constituent_str = sentence[self.start_index:self.end_index() + 1]
+        completed_constituent = CompleteArc(constituent_str, self._pos, self.start_index(),
                                             self.end_index(), self._pos==pos.SENTENCE, False,
                                             self._subsequence, self._cur_order)
         return completed_constituent

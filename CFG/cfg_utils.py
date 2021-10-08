@@ -99,8 +99,12 @@ def incomplete_arcs_starting_with(initial_arc:CompleteArc, ending_with=False) ->
         for i, ordering_list in enumerate(pos_ordering.all_orderings()):
             ordering_index = len(ordering_list) - 1 if ending_with else 0
             if ordering_list[ordering_index] == initial_arc.get_pos():
-                ret.append(
-                    ActiveArc(pos_ordering.pos, i, ordering_index, initial_arc.start_index()))
+                
+                # Check that new ordering will fit into string (still might not)
+                if initial_arc.end_index() >= len(ordering_list) - 1:
+                    new_active_arc = ActiveArc(pos_ordering.pos, i, ordering_index, initial_arc.end_index())
+                    new_active_arc.add_to_subsequence(initial_arc)
+                    ret.append(new_active_arc)
     return ret
 
 
