@@ -1,7 +1,7 @@
 from CFG.cfg import RULES_DICT
 from part_of_speech import PartOfSpeech as pos
 
-class CompleteConstituent:
+class CompleteArc:
     
     def __init__(self, words:str, pos:pos, input_str_start_index:int,
                  input_str_end_index:int, root=False, leaf=False,
@@ -30,6 +30,12 @@ class CompleteConstituent:
     def is_word(self):
         return self.leaf
     
+    def get_start_index(self):
+        return self.start_index
+    
+    def get_end_index(self):
+        return self.end_index
+        
     def get_children(self):
         return self.children
     
@@ -46,7 +52,7 @@ class CompleteConstituent:
         return len(self.children)
     
     
-class IncompleteConstituent:
+class ActiveArc:
     def __init__(self, pos:pos, cur_order:int, cur_loc:int,
                  input_str_start_index:int) -> None:
         self.pos = pos
@@ -55,7 +61,7 @@ class IncompleteConstituent:
         self.start_index = input_str_start_index
         self.children = []  # List of constituents
         
-    def add_ordering(self, child:CompleteConstituent):
+    def add_ordering(self, child:CompleteArc):
         self.children.append(child)
         
     def expected_pos(self) -> pos:
@@ -73,14 +79,23 @@ class IncompleteConstituent:
             raise Exception("Incomplete Constituent is terminal. No constituent to advance" + str(self))
         else:
             self.cur_loc += 1
+    
+    def get_start_index(self):
+        return self.start_index
+    
+    def get_end_index(self):
+        if len(self.children) == 0:
+            raise Exception("Well this should never happen.")
+        
+        return self.children[-1].get_end_index()
             
-    def complete(self, sentence:list[str], input_string_end_index:int) -> CompleteConstituent:
+    def complete(self, sentence:list[str], input_string_end_index:int) -> CompleteArc:
         constituent_str = sentence[self.start_index:input_string_end_index + 1]
-        completed_constituent = CompleteConstituent(constituent_str, self.pos, self.start_index,
+        completed_constituent = CompleteArc(constituent_str, self.pos, self.start_index,
                                                     input_string_end_index, self.pos==pos.SENTENCE, False,
                                                     self.children, self.cur_order)
         return completed_constituent
-    
+        
     def is_complete() -> bool:
         return False
         
