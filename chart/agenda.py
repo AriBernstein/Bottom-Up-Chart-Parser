@@ -1,5 +1,4 @@
-from utils import phrase_string_to_word_list
-from arc import CompleteArc, ActiveArc
+from chart.arc import CompleteArc, ActiveArc
 
 class Agenda:
     
@@ -7,7 +6,7 @@ class Agenda:
         self.starts = start_dict
         self.ends = end_dict
         self.sentence_str = sentence
-        self.sentence_lst = phrase_string_to_word_list(sentence)
+        self.sentence_lst = sentence.split(' ')
         self.roots = set()
         self.num_words = len(self.sentence_lst)
         

@@ -1,5 +1,5 @@
-from CFG.parse_cfg import build_tree
 from nltk.corpus import wordnet as wn
+from chart.bottom_up_parser import build_tree
 
 if __name__ == "__main__":
     # lst = wn.synsets('morning')
