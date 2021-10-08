@@ -1,4 +1,5 @@
 import re
+from queue import SimpleQueue
 from nltk.corpus import wordnet as wn
 
 from part_of_speech import PartOfSpeech as pos
@@ -63,11 +64,11 @@ def phrase_string_to_word_list(phrase_str:str) -> list[str]:
 
 
 def get_initial_agenda(sentence:str) -> Agenda:    
-    starting_arcs = []
-    
+    starting_arcs = SimpleQueue()
     for i, word in enumerate(phrase_string_to_word_list(sentence)):
         for pos in get_parts_of_speech(word.lower()):
-            starting_arcs.append(CompleteArc(word, pos, i, i, False, True))
+            starting_arcs.put(
+                CompleteArc(word, pos, i, i, False, True))
     
     return Agenda(starting_arcs)
 
@@ -82,9 +83,7 @@ def incomplete_arcs_starting_with(pos:pos, current_index, ending_with=False) -> 
         for i, ordering_list in enumerate(pos_ordering.all_orderings()):
             if ordering_list[-1 if ending_with else 0] == pos:
                 ret.append(
-                    ActiveArc(pos_ordering.pos, i, 0, current_index)
-                )
-                
+                    ActiveArc(pos_ordering.pos, i, 0, current_index))
     return ret
 
 

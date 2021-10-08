@@ -1,3 +1,4 @@
+from queue import SimpleQueue
 from chart.arc import CompleteArc, ActiveArc
 
 class Chart:
@@ -6,12 +7,19 @@ class Chart:
         self.sentence_str = sentence
         
         self.sentence_lst = sentence.split(' ')
+        self.roots = set()
+        
+        self.num_words = len(self.sentence_lst)
         self.complete_starts = {}
         self.complete_ends = {}
         self.incomplete_starts = {}
         self.incomplete_ends = {}
-        self.roots = set()
-        self.num_words = len(self.sentence_lst)
+        
+        for i in range(self.num_words):
+            self.complete_starts[i] = set()
+            self.complete_ends[i] = set()
+            self.incomplete_starts[i] = set()
+            self.incomplete_ends[i] = set()
         
     def arcs_starting_at_index(self, index:int) -> list[CompleteArc]:
         return self.complete_starts[index]
@@ -28,16 +36,19 @@ class Chart:
     def has_root(self) -> bool:
         return len(self.root) > 0
     
+    def word_length(self) -> int:
+        return len(self.sentence_lst)
+    
     def add_complete_arc(self, arc:CompleteArc) -> None:
-        self.complete_starts[arc.get_start_index()].add(arc)
-        self.complete_ends[arc.get_end_index()].add(arc)
-        if arc.get_start_index() == 0 and arc.get_end_index() == self.num_words - 1:
+        self.complete_starts[arc.start_index()].add(arc)
+        self.complete_ends[arc.end_index()].add(arc)
+        if arc.start_index() == 0 and arc.end_index() == self.num_words - 1:
             self.add_root(arc)
             
     def _traversal_helper(self, current_arc:CompleteArc,
                           current_permutation:list[CompleteArc]=[]) -> list[list[CompleteArc]]:
         
-        end_index = current_arc.get_end_index()
+        end_index = current_arc.end_index()
         
         current_permutation = current_permutation.copy()
         current_permutation.append(current_arc)
@@ -53,7 +64,6 @@ class Chart:
             current_arc_permutations.extend(following_permutations)
             
         return current_arc_permutations
-        
     
     def get_permutations(self) -> list[list[CompleteArc]]:
         
@@ -63,16 +73,10 @@ class Chart:
             permutations.extend(
                 self._traversal_helper(opening_arcs)
             )
-            
+
         return permutations
     
-    def add_incomplete_arc(self, arc: ActiveArc) -> None:
-        start_index, end_index = arc.get_start_index(), arc.get_end_index()
-        if not start_index in self.incomplete_starts:
-            self.incomplete_starts[start_index] = set()
-        if not end_index in self.incomplete_ends:
-            self.incomplete_ends[end_index] = set()
-            
+    def add_incomplete_arc(self, arc: ActiveArc) -> None:   
         self.incomplete_starts[arc.get_start_index()].add(arc)
         self.incomplete_ends[arc.get_end_index()].add(arc)
         
@@ -82,14 +86,17 @@ class Chart:
         
         
 class Agenda:
-    def __init__(self, word_arcs:list[CompleteArc]) -> None:
-        self.arc_stack = word_arcs
+    def __init__(self, word_arcs:SimpleQueue[CompleteArc]) -> None:
+        self.arc_queue = word_arcs
         
-    def push(self, new_arc:CompleteArc):
-        self.arc_stack.append(new_arc)
+    def enqueue(self, new_arc:CompleteArc) -> None:
+        self.arc_queue.put(new_arc)
         
-    def pop(self):
-        return self.arc_stack.pop()
+    def dequeue(self) -> CompleteArc:
+        return self.arc_queue.get()
     
-    def empty(self):
-        return len(self.arc_stack) == 0
+    def empty(self) -> bool:
+        return self.arc_queue.empty()
+    
+    def __sizeof__(self) -> int:
+        return self.arc_queue.qsize()

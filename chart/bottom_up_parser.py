@@ -1,6 +1,6 @@
 from CFG.cfg_utils import incomplete_arcs_starting_with, incomplete_arcs_ending_with, get_initial_agenda
 from chart.arc import CompleteArc, ActiveArc
-from chart.chart_agenda import Chart, Chart
+from chart.chart_agenda import Agenda, Chart, Chart
 
 # def _build_tree_helper(permutation_list:list[list[CompleteArc]], current_tree:Agenda,
 #                        prev_starts_dict:dict, prev_ends_dict:dict) -> list[list[CompleteArc]]:
@@ -59,18 +59,25 @@ from chart.chart_agenda import Chart, Chart
 #             new_ends[word_index] = prev_ends_dict[word_index]
     
 #     return Agenda(new_starts, new_ends, "").get_permutations()
+
+
+def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
+    this_arc = Agenda.dequeue()
+    chart.add_complete_arc(this_arc)
+    
+    # Bottom-up arc addition
+    # for empty_arc in incomplete_arcs_starting_with(this_arc.)
     
     
 def build_tree(sentence:str) -> Chart:
-    
-    # Instantiate lists of permutations of word phrases
     agenda = get_initial_agenda(sentence)
     chart = Chart(sentence)
-        
-    # while(not agenda.has_root()):
-    #     valid_permutations = _build_tree_helper(valid_permutations, agenda,
-    #                                             previous_start_dict, previous_end_dict)
+    n = chart.word_length()
+    
+    while not Agenda.empty():
+        _generate_arcs(agenda, chart)
 
-            
-    # for i in valid_permutations:
-    #     print(i)
+    if chart.has_root():
+        return chart
+    else:
+        raise Exception("Could not find root for parse tree.")
