@@ -1,9 +1,9 @@
 
 
 from utils import phrase_string_to_word_list
-from phrase import Phrase
+from constituent import Constituent
 
-class ParseTree:
+class Agenda:
     
     def __init__(self, start_dict:dict, end_dict:dict, sentence:str) -> None:
         self.starts = start_dict
@@ -13,29 +13,29 @@ class ParseTree:
         self.root = None
         self.num_words = len(self.sentence_lst)
         
-    def phrases_starting_at_index(self, index:int) -> list[Phrase]:
+    def phrases_starting_at_index(self, index:int) -> list[Constituent]:
         return self.starts[index]
     
-    def phrases_ending_at_index(self, index:int) -> list[Phrase]:
+    def phrases_ending_at_index(self, index:int) -> list[Constituent]:
         return self.ends[index]
     
-    def get_root(self) -> Phrase:
+    def get_root(self) -> Constituent:
         return self.root
     
-    def set_root(self, root:Phrase) -> None:
+    def set_root(self, root:Constituent) -> None:
         self.root = root
         
     def has_root(self) -> bool:
         return self.root != None
     
-    def add_phrase(self, phr:Phrase) -> None:
+    def add_phrase(self, phr:Constituent) -> None:
         self.starts[phr.start_index].append(phr)
         self.ends[phr.end_index].append(phr)
         if phr.start_index == 0 and phr.end_index == self.num_words - 1:
             self.set_root(phr)
             
-    def _traversal_helper(self, current_phrase:Phrase,
-                          current_permutation:list[Phrase]=[]) -> list[list[Phrase]]:
+    def _traversal_helper(self, current_phrase:Constituent,
+                          current_permutation:list[Constituent]=[]) -> list[list[Constituent]]:
         
         end_index = current_phrase.end_index
         
@@ -57,7 +57,7 @@ class ParseTree:
         return current_phrase_permutations
         
     
-    def get_permutations(self) -> list[list[Phrase]]:
+    def get_permutations(self) -> list[list[Constituent]]:
         
         permutations = []
         
