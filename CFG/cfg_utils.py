@@ -5,14 +5,9 @@ from part_of_speech import PartOfSpeech as pos
 from CFG import cfg
 from CFG.word_constants import aux_verbs, modal_verbs, determiners, \
                            pronouns
-from chart.agenda import Agenda
+from chart.chart_agenda import Chart, Agenda
 from chart.arc import CompleteArc, ActiveArc
 
-def lower_case_plain_text(phrase_str:str) -> str:
-    return re.sub(r"[:;!?/,]", "", phrase_str).lower()
-
-def phrase_string_to_word_list(phrase_str:str) -> list[str]:
-    return lower_case_plain_text(phrase_str).split(' ')
 
 def get_parts_of_speech(word:str) -> set:
     # n    noun 
@@ -59,18 +54,22 @@ def get_parts_of_speech(word:str) -> set:
     return part_of_speech_set
 
 
-def get_base_tree(sentence:str) -> Agenda:    
-    starts, ends = {}, {}
+def lower_case_plain_text(phrase_str:str) -> str:
+    return re.sub(r"[:;!?/,]", "", phrase_str).lower()
+
+
+def phrase_string_to_word_list(phrase_str:str) -> list[str]:
+    return lower_case_plain_text(phrase_str).split(' ')
+
+
+def get_initial_agenda(sentence:str) -> Agenda:    
+    starting_arcs = []
     
     for i, word in enumerate(phrase_string_to_word_list(sentence)):
-        starts[i], ends[i] = [], []
-        
         for pos in get_parts_of_speech(word.lower()):
-            new_word_phrase = CompleteArc(word, pos, i, i, False, True)
-            starts[i].append(new_word_phrase)
-            ends[i].append(new_word_phrase)
+            starting_arcs.append(CompleteArc(word, pos, i, i, False, True))
     
-    return Agenda(starts, ends, sentence)
+    return Agenda(starting_arcs)
 
 
 def incomplete_arcs_starting_with(pos:pos, current_index, ending_with=False) -> list[ActiveArc]:
