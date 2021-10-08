@@ -1,8 +1,8 @@
-from arc import CompleteArc, ActiveArc
+from chart.arc import CompleteArc, ActiveArc
 from utils import get_parts_of_speech, phrase_string_to_word_list
 from part_of_speech import PartOfSpeech as pos
 from CFG import cfg
-from agenda import Agenda
+from chart.agenda import Agenda
 
 def _get_base_tree(sentence:str) -> Agenda:    
     starts, ends = {}, {}
