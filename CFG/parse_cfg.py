@@ -1,4 +1,4 @@
-from constituent import Constituent, IncompleteConstituent
+from constituent import CompleteConstituent, IncompleteConstituent
 from utils import get_parts_of_speech, phrase_string_to_word_list
 from part_of_speech import PartOfSpeech as pos
 from CFG import cfg
@@ -11,17 +11,17 @@ def _get_base_tree(sentence:str) -> Agenda:
         starts[i], ends[i] = [], []
         
         for pos in get_parts_of_speech(word.lower()):
-            new_word_phrase = Constituent(word, pos, i, i, False, True)
+            new_word_phrase = CompleteConstituent(word, pos, i, i, False, True)
             starts[i].append(new_word_phrase)
             ends[i].append(new_word_phrase)
     
     return Agenda(starts, ends, sentence)
 
 
-def _incomplete_phrases_starting_with(pos:pos, current_index, ending_with=False) -> list[IncompleteConstituent]:
+def _incomplete_constituents_starting_with(pos:pos, current_index, ending_with=False) -> list[IncompleteConstituent]:
     """
     Given a part of speech, find all definitions in the grammar that being with it,
-    For each one, instantiate a new incomplete_phrase
+    For each one, instantiate a new IncompleteConstituent
     """
     ret = []
     for pos_ordering in cfg.POS_PHRASE_SET:
@@ -34,50 +34,50 @@ def _incomplete_phrases_starting_with(pos:pos, current_index, ending_with=False)
     return ret
 
 
-def _incomplete_phrases_ending_with(pos:pos, current_index) -> list[IncompleteConstituent]:
+def _incomplete_constituents_ending_with(pos:pos, current_index) -> list[IncompleteConstituent]:
     """
     Given a part of speech, find all definitions in the grammar that end with it,
-    For each one, instantiate a new incomplete_phrase
+    For each one, instantiate a new IncompleteConstituent
     """
-    return _incomplete_phrases_starting_with(pos, current_index, ending_with=True)
+    return _incomplete_constituents_starting_with(pos, current_index, ending_with=True)
 
 
-def _build_tree_helper(permutation_list:list[list[Constituent]],
+def _build_tree_helper(permutation_list:list[list[CompleteConstituent]],
                        current_tree:Agenda,
-                       prev_starts_dict:dict, prev_ends_dict:dict) -> list[list[Constituent]]:
+                       prev_starts_dict:dict, prev_ends_dict:dict) -> list[list[CompleteConstituent]]:
     """
-    Permutation set -> set of lists containing existing orderings of phrases
+    Permutation set -> set of lists containing existing orderings of Constituents
     Incomplete Phrases -> sets of incomplete phrases in the process of being constructed
     """
-    incomplete_phrases = set()
+    incomplete_constituents = set()
     new_starts, new_ends = {}, {}
     
-    # List of sets of phrases, each index correlates to 
-    for permutation in permutation_list: # Iterate through lists of Phrase objects
+    # List of sets of constituents, each index correlates to 
+    for permutation in permutation_list: # Iterate through lists of constituent objects
         
-        for cur_phrase in permutation:  # Iterate through phrase objects
+        for cur_const in permutation:  # Iterate through constituent objects
                     
-            # Add new potentials phrases to set
-            incomplete_phrases.update(
-                _incomplete_phrases_starting_with(cur_phrase.pos, cur_phrase.start_index))
+            # Add new potentials constituent to set
+            incomplete_constituents.update(
+                _incomplete_constituents_starting_with(cur_const.pos, cur_const.start_index))
             
-            # For each incomplete phrase, remove if invalid, update otherwise
-            for incomplete_phrase in incomplete_phrases.copy():
+            # For each incomplete constituent, remove if invalid, update otherwise
+            for incomplete_const in incomplete_constituents.copy():
                 
                 # If no match, remove form future consideration
-                if incomplete_phrase.expected_phrase() != cur_phrase.pos:
-                    incomplete_phrases.remove(incomplete_phrase)
+                if incomplete_const.expected_pos() != cur_const.pos:
+                    incomplete_constituents.remove(incomplete_const)
                     continue
                 
                 # Else, add subphrase
-                incomplete_phrase.add_ordering(cur_phrase)
+                incomplete_const.add_ordering(cur_const)
                 
                 # If just-added subphrase has completed its phrase:
-                if incomplete_phrase.terminal():
-                    completed_phrase = incomplete_phrase.complete(current_tree.sentence_lst,
-                                                                  cur_phrase.end_index)
-                    current_tree.add_phrase(completed_phrase)
-                    incomplete_phrases.remove(incomplete_phrase)
+                if incomplete_const.terminal():
+                    completed_phrase = incomplete_const.complete(current_tree.sentence_lst,
+                                                                 cur_const.end_index)
+                    current_tree.add_constituent(completed_phrase)
+                    incomplete_constituents.remove(incomplete_const)
 
                     # Add to dictionaries for new permutations                    
                     if not completed_phrase.start_index in new_starts:
@@ -90,7 +90,7 @@ def _build_tree_helper(permutation_list:list[list[Constituent]],
                     
                     continue
                 
-                incomplete_phrase.advance()
+                incomplete_const.advance()
     
     
     for word_index in range(current_tree.num_words):
