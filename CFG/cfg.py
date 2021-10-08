@@ -7,11 +7,7 @@ class Ordering:
         self.word = word
         self.composite = composite
         
-    def __iter__(self):
-        for ordering in self.valid_orderings:
-            yield ordering
-        
-    def all_orderings(self):
+    def all_orderings(self) -> list[list[pos]]:
         return self.valid_orderings
     
     def get_order(self, index:int):

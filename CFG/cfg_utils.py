@@ -63,6 +63,10 @@ def phrase_string_to_word_list(phrase_str:str) -> list[str]:
     return lower_case_plain_text(phrase_str).split(' ')
 
 
+def get_pos_ordering(pos:pos, ordering_index:int) -> list[pos]:
+    return cfg.RULES_DICT[pos].get_order(ordering_index)
+
+
 def get_initial_agenda(sentence:str) -> Agenda:    
     starting_arcs = SimpleQueue()
     for i, word in enumerate(phrase_string_to_word_list(sentence)):
@@ -72,24 +76,45 @@ def get_initial_agenda(sentence:str) -> Agenda:
     
     return Agenda(starting_arcs)
 
-
-def incomplete_arcs_starting_with(pos:pos, current_index, ending_with=False) -> list[ActiveArc]:
+def incomplete_arcs_starting_with(initial_arc:CompleteArc, ending_with=False) -> list[ActiveArc]:
     """
-    Given a part of speech, find all definitions in the grammar that being with it,
-    For each one, instantiate a new ActiveArc
+    Given a complete arc initial_arc, find all phrases and orderings whose first element = pos
+    of initial_arc . For each such pos-ordering, create a new active arc populated only by
+    initial_arc of said pos with ordering pointing to the 0th index.
+    
+    Args:
+        initial_arc (CompleteArc): initial complete arc, look for its POS at the start/end
+                                   of all POS orderings
+        ending_with (bool, optional): If true, look instead for POS orderings that end
+                                      with pos of initial_arc, create active arc with 
+                                      initial_arc at the end of its subsequence with cur
+                                      index as the final index of subsequence
+
+    Returns:
+        list[ActiveArc]: list of activeArcs, each containing only initial_arc as the first or
+                         final element in their subsequences
     """
     ret = []
     for pos_ordering in cfg.POS_PHRASE_SET:
         for i, ordering_list in enumerate(pos_ordering.all_orderings()):
-            if ordering_list[-1 if ending_with else 0] == pos:
+            ordering_index = len(ordering_list) - 1 if ending_with else 0
+            if ordering_list[ordering_index] == initial_arc.get_pos():
                 ret.append(
-                    ActiveArc(pos_ordering.pos, i, 0, current_index))
+                    ActiveArc(pos_ordering.pos, i, ordering_index, initial_arc.start_index()))
     return ret
 
 
-def incomplete_arcs_ending_with(pos:pos, current_index) -> list[ActiveArc]:
+def incomplete_arcs_ending_with(initial_arc:CompleteArc) -> list[ActiveArc]:
     """
-    Given a part of speech, find all definitions in the grammar that end with it,
-    For each one, instantiate a new ActiveArc
+    Given a complete arc first_arc, find all phrases and orderings whose last element = pos
+    of initial_arc . For each such pos-ordering, create a new active arc populated only by
+    initial_arc of said pos with ordering pointing to the final index of its subsequence.
+
+    Args:
+        initial_arc (CompleteArc): initial complete arc, look for its POS at the end
+                                   of all POS orderings
+
+    Returns:
+        list[ActiveArc]: [description]
     """
-    return incomplete_arcs_starting_with(pos, current_index, ending_with=True)
+    return incomplete_arcs_starting_with(initial_arc, ending_with=True)

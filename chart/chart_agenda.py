@@ -77,12 +77,12 @@ class Chart:
         return permutations
     
     def add_incomplete_arc(self, arc: ActiveArc) -> None:   
-        self.incomplete_starts[arc.get_start_index()].add(arc)
-        self.incomplete_ends[arc.get_end_index()].add(arc)
+        self.incomplete_starts[arc.start_index()].add(arc)
+        self.incomplete_ends[arc.end_index()].add(arc)
         
     def update_incomplete_arc(self, arc: ActiveArc, old_end_index:int):
         self.incomplete_ends[old_end_index].remove(arc)
-        self.incomplete_ends[arc.get_end_index()].add(arc)
+        self.incomplete_ends[arc.end_index()].add(arc)
         
         
 class Agenda:

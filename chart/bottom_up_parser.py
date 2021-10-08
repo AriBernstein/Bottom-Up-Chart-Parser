@@ -62,12 +62,30 @@ from chart.chart_agenda import Agenda, Chart, Chart
 
 
 def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
+    # Dequeue a completed arc this_arc from the Agenda, add it to the Chart
     this_arc = Agenda.dequeue()
     chart.add_complete_arc(this_arc)
+    newly_completed_arcs = set()
     
     # Bottom-up arc addition
-    # for empty_arc in incomplete_arcs_starting_with(this_arc.)
-    
+    for new_arc in incomplete_arcs_ending_with(this_arc):
+        
+        # Given rule whose orderings end with type this_arc, add this_arc to new incomplete arc A.
+        new_arc.add_to_subsequence(this_arc)
+        if new_arc.terminal():
+            # Check if A is terminal (ie. only child is this_arc and no longer incomplete).
+            # If so, convert A to complete arc and add it to the chart as such
+            newly_completed_arc = new_arc.complete(chart.sentence_lst)
+            newly_completed_arcs.add(newly_completed_arc)
+            chart.add_complete_arc(newly_completed_arc)
+        else:   # Add A to chart as incomplete arc
+            new_arc._advance()
+            chart.add_incomplete_arc(new_arc)
+        
+    # Active Arc extension
+    # For each incomplete arc from this_arc.end_index + 1 to 
+    # for i in reversed(range(this_arc.start_index(), this_arc.end_index() + 1)):
+        
     
 def build_tree(sentence:str) -> Chart:
     agenda = get_initial_agenda(sentence)

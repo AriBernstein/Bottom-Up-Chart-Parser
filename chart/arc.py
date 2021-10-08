@@ -1,19 +1,19 @@
-from CFG.cfg import RULES_DICT
+from CFG.cfg_utils import get_pos_ordering
 from part_of_speech import PartOfSpeech as pos
 
 class CompleteArc:
     
     def __init__(self, words:str, pos:pos, input_str_start_index:int,
                  input_str_end_index:int, root=False, leaf=False,
-                 children=None, ordering_index:int=None):
+                 subsequence=None, ordering_index:int=None):
         self._words = words
         self._pos = pos
         self._start_index = input_str_start_index
         self._end_index = input_str_end_index
         self._root = root
         self._leaf = leaf
-        self.children = children
-        self.ordering_index = ordering_index
+        self._subsequence = subsequence
+        self._ordering_index = ordering_index
         
         if not leaf and ordering_index == None:
             raise Exception("Only word parts of speech may have None ordering_index.")
@@ -39,8 +39,8 @@ class CompleteArc:
     def end_index(self) -> int:
         return self._end_index
         
-    def get_children(self) -> list:
-        return self.children
+    def get_subsequence(self) -> list:
+        return self._subsequence
     
     def is_complete() -> bool:
         return True
@@ -52,54 +52,71 @@ class CompleteArc:
         return str(self)
     
     def __len__(self) -> int:
-        return len(self.children)
+        return len(self._subsequence)
     
     
 class ActiveArc:
+    """
+    
+    
+    Globals:
+        _pos (pos): [description]
+        _cur_order (int): [description]
+        _cur_loc (int): [description]
+        _start_index (int): [description]
+    """
     def __init__(self, pos:pos, cur_order:int, cur_loc:int,
                  input_str_start_index:int) -> None:
         self._pos = pos
         self._cur_order = cur_order
         self._cur_loc = cur_loc
         self._start_index = input_str_start_index
-        self._children = []  # List of constituents
+        
+        # List of completed_arcs
+        self._subsequence = [None] * len(get_pos_ordering(self._pos, cur_order))
 
     def get_pos(self):
         return self._pos
     
-    def add_ordering(self, child:CompleteArc):
-        self._children.append(child)
+    def add_to_subsequence(self, child:CompleteArc):
+        if self.terminal():
+            raise Exception("Cannot add to subsequence of terminal active arc")
+        self._subsequence[self._cur_loc] = child
+        self._advance()
         
     def expected_pos(self) -> pos:
-        return RULES_DICT[self._pos].get_order(self._cur_order)[self._cur_loc]
+        return get_pos_ordering(self.get_pos(), self._cur_order)[self._cur_loc]
+        # return RULES_DICT[self._pos].get_order(self._cur_order)[self._cur_loc]
     
     def empty(self) -> bool:
-        return self._cur_loc == 0
+        return self._cur_loc == len(self._subsequence) - 1
     
     def terminal(self) -> bool:
-        ordering_list = RULES_DICT[self._pos].get_order(self._cur_order)
-        return self._cur_loc == len(ordering_list) - 1
+        return self._cur_loc == 0
     
-    def advance(self):  # When terminal, if validated, parent becomes complete constituent
+    def _advance(self):  # When terminal, if validated, parent becomes complete constituent
         if self.terminal():
-            raise Exception("Incomplete Constituent is terminal. No constituent to advance" + str(self))
+            raise Exception("Active Arc is terminal. No constituent to advance" + str(self))
         else:
-            self._cur_loc += 1
+            self._cur_loc -= 1
     
-    def get_start_index(self):
+    def start_index(self):
         return self._start_index
     
-    def get_end_index(self):
-        if len(self._children) == 0:
+    def end_index(self):
+        if len(self._subsequence) == 0:
             raise Exception("Well this should never happen.")
         
-        return self._children[-1].get_end_index()
+        return self._subsequence[-1].end_index()
             
-    def complete(self, sentence:list[str], input_string_end_index:int) -> CompleteArc:
-        constituent_str = sentence[self._start_index:input_string_end_index + 1]
+    def complete(self, sentence:list[str]) -> CompleteArc:
+        if not self.terminal():
+            raise Exception("Cannot convert non-terminal incomplete arc to complete arc.")
+        
+        constituent_str = sentence[self._start_index:self.end_index() + 1]
         completed_constituent = CompleteArc(constituent_str, self._pos, self._start_index,
-                                                    input_string_end_index, self._pos==pos.SENTENCE, False,
-                                                    self._children, self._cur_order)
+                                            self.end_index(), self._pos==pos.SENTENCE, False,
+                                            self._subsequence, self._cur_order)
         return completed_constituent
         
     def is_complete() -> bool:
