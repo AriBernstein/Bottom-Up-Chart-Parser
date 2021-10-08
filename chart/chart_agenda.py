@@ -1,4 +1,4 @@
-from queue import SimpleQueue
+from collections import deque
 from chart.arc import CompleteArc, ActiveArc
 
 class Chart:
@@ -34,7 +34,7 @@ class Chart:
         self.roots.add(root)
         
     def has_root(self) -> bool:
-        return len(self.root) > 0
+        return len(self.roots) > 0
     
     def word_length(self) -> int:
         return len(self.sentence_lst)
@@ -44,7 +44,8 @@ class Chart:
         self.complete_ends[arc.end_index()].add(arc)
         if arc.start_index() == 0 and arc.end_index() == self.num_words - 1:
             self.add_root(arc)
-            
+
+
     def _traversal_helper(self, current_arc:CompleteArc,
                           current_permutation:list[CompleteArc]=[]) -> list[list[CompleteArc]]:
         
@@ -60,8 +61,7 @@ class Chart:
         # Else, for each arc starting to the index one after the end of our current arc, add a permutation
         current_arc_permutations = []
         for next_arc in self.complete_ends[end_index + 1]:   # For each of the arcs that start immediately after this ends
-            following_permutations = self._traversal_helper(next_arc, current_permutation)  # Get list of permutations (list of phrases) 
-            current_arc_permutations.extend(following_permutations)
+            current_arc_permutations.extend(self._traversal_helper(next_arc, current_permutation))  # Get list of permutations (list of phrases) 
             
         return current_arc_permutations
     
@@ -76,27 +76,31 @@ class Chart:
 
         return permutations
     
-    def add_incomplete_arc(self, arc: ActiveArc) -> None:   
+    def add_active_arc(self, arc: ActiveArc) -> None:   
         self.incomplete_starts[arc.start_index()].add(arc)
         self.incomplete_ends[arc.end_index()].add(arc)
         
-    def update_incomplete_arc(self, arc: ActiveArc, old_start_index:int):
-        self.incomplete_starts[old_start_index].remove(arc)
-        self.incomplete_starts[arc.start_index()].add(arc)
+    def update_active_arc(self, arc: ActiveArc, old_end_index:int):
+        self.incomplete_ends[old_end_index].remove(arc)
+        self.incomplete_ends[arc.end_index()].add(arc)
+        
+    def remove_active_arc(self, arc: ActiveArc):
+        self.incomplete_starts[arc.start_index()].remove(arc)
+        self.incomplete_ends[arc.end_index()].remove(arc)
         
         
 class Agenda:
-    def __init__(self, word_arcs:SimpleQueue[CompleteArc]) -> None:
-        self.arc_queue = word_arcs
+    def __init__(self, word_arcs:deque[CompleteArc]) -> None:
+        self._arc_stack = word_arcs
         
-    def enqueue(self, new_arc:CompleteArc) -> None:
-        self.arc_queue.put(new_arc)
+    def push(self, new_arc:CompleteArc) -> None:
+        self._arc_stack.append(new_arc)
         
-    def dequeue(self) -> CompleteArc:
-        return self.arc_queue.get()
+    def pop(self) -> CompleteArc:
+        return self._arc_stack.pop()
     
     def empty(self) -> bool:
-        return self.arc_queue.empty()
+        return len(self._arc_stack) == 0
     
     def __sizeof__(self) -> int:
-        return self.arc_queue.qsize()
+        return self._arc_stack.qsize()
