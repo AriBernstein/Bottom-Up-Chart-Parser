@@ -12,4 +12,5 @@ if __name__ == "__main__":
     # for i in pe:
     #     print(i)
     
-    build_tree("Book that flight")
+    complete_tree = build_tree("Book that flight")
+    print(complete_tree)

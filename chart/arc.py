@@ -16,7 +16,8 @@ class CompleteArc:
         self._ordering_index = ordering_index
         
         if not leaf and ordering_index == None:
-            raise Exception("Only word parts of speech may have None ordering_index.")
+            raise Exception("Only word parts of speech may have None \
+                ordering_index.")
     
     def get_pos(self) -> pos:
         return self._pos
@@ -65,15 +66,15 @@ class ActiveArc:
         _cur_loc (int): [description]
         _end_index (int): [description]
     """
-    def __init__(self, pos:pos, cur_order:int, subsequence_index:int,
-                 input_str_start_index:int) -> None:
+    def __init__(self, pos:pos, cur_order:int, input_str_start_index:int) -> None:
         self._pos = pos
         self._cur_order = cur_order
-        self._subsequence_index = subsequence_index
         self._start_index = input_str_start_index
         
         # List of completed_arcs
         self._subsequence = [None] * len(get_pos_ordering(self._pos, cur_order))
+        self._subsequence_index = 0
+
 
     def get_pos(self):
         return self._pos
@@ -86,7 +87,6 @@ class ActiveArc:
         
     def expected_pos(self) -> pos:
         return get_pos_ordering(self.get_pos(), self._cur_order)[self._subsequence_index]
-        # return RULES_DICT[self._pos].get_order(self._cur_order)[self._cur_loc]
     
     def empty(self) -> bool:
         return self._subsequence_index == 0
@@ -103,7 +103,7 @@ class ActiveArc:
         
         return self._subsequence[self._subsequence_index - 1].end_index()
     
-    def complete(self, sentence:list[str]) -> CompleteArc:
+    def make_complete(self, sentence:list[str]) -> CompleteArc:
         if not self.terminal():
             raise Exception("Cannot convert non-terminal incomplete arc to complete arc.")
         

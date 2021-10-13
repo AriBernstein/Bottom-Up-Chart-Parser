@@ -1,5 +1,6 @@
 from collections import deque
 from chart.arc import CompleteArc, ActiveArc
+from part_of_speech import PartOfSpeech as pos
 
 class Chart:
     
@@ -42,7 +43,8 @@ class Chart:
     def add_complete_arc(self, arc:CompleteArc) -> None:
         self.complete_starts[arc.start_index()].add(arc)
         self.complete_ends[arc.end_index()].add(arc)
-        if arc.start_index() == 0 and arc.end_index() == self.num_words - 1:
+        if arc.get_pos() == pos.SENTENCE and \
+            arc.start_index() == 0 and arc.end_index() == self.num_words - 1:
             self.add_root(arc)
 
 
@@ -81,13 +83,25 @@ class Chart:
         self.incomplete_ends[arc.end_index()].add(arc)
         
     def update_active_arc(self, arc: ActiveArc, old_end_index:int):
+        """
+        Only ever called after arc has been updated. 
+
+        Args:
+            arc (ActiveArc): TODO
+            old_end_index (int): TODO
+        """
         self.incomplete_ends[old_end_index].remove(arc)
         self.incomplete_ends[arc.end_index()].add(arc)
         
-    def remove_active_arc(self, arc: ActiveArc):
+    def remove_active_arc(self, arc: ActiveArc, end_index_in_chart:int):
         self.incomplete_starts[arc.start_index()].remove(arc)
-        self.incomplete_ends[arc.end_index()].remove(arc)
-        
+        self.incomplete_ends[end_index_in_chart].remove(arc)
+    
+    def __str__(self) -> str:
+        ret = ""
+        for sentence in self.get_roots():
+            ret = ret + str(sentence) + "\n"
+        return ret
         
 class Agenda:
     def __init__(self, word_arcs:deque[CompleteArc]) -> None:
