@@ -28,7 +28,7 @@ def is_ordinal_number(phrase:str) -> bool:
         if len(digit) > 4:  # "twentieth" -> "twenty"
             if (digit[-4:]) == "ieth":
                 temp = digit[0:-4]
-                temp = temp + 'y'
+                temp += 'y'
                 if temp in cardinal_numbers_twenty_ninety:
                     return True
         

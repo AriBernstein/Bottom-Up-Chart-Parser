@@ -1,4 +1,5 @@
 from collections import deque
+
 from chart.arc import CompleteArc, ActiveArc
 from part_of_speech import PartOfSpeech as pos
 
@@ -46,37 +47,6 @@ class Chart:
         if arc.get_pos() == pos.SENTENCE and \
             arc.start_index() == 0 and arc.end_index() == self.num_words - 1:
             self.add_root(arc)
-
-
-    def _traversal_helper(self, current_arc:CompleteArc,
-                          current_permutation:list[CompleteArc]=[]) -> list[list[CompleteArc]]:
-        
-        end_index = current_arc.end_index()
-        
-        current_permutation = current_permutation.copy()
-        current_permutation.append(current_arc)
-        
-        # If there is nothing to the right
-        if end_index == len(self.sentence_lst) - 1:
-            return [current_permutation]
- 
-        # Else, for each arc starting to the index one after the end of our current arc, add a permutation
-        current_arc_permutations = []
-        for next_arc in self.complete_ends[end_index + 1]:   # For each of the arcs that start immediately after this ends
-            current_arc_permutations.extend(self._traversal_helper(next_arc, current_permutation))  # Get list of permutations (list of phrases) 
-            
-        return current_arc_permutations
-    
-    def get_permutations(self) -> list[list[CompleteArc]]:
-        
-        permutations = []
-        
-        for opening_arcs in self.complete_starts[0]:
-            permutations.extend(
-                self._traversal_helper(opening_arcs)
-            )
-
-        return permutations
     
     def add_active_arc(self, arc: ActiveArc) -> None:   
         self.incomplete_starts[arc.start_index()].add(arc)
@@ -100,7 +70,14 @@ class Chart:
     def __str__(self) -> str:
         ret = ""
         for sentence in self.get_roots():
-            ret = ret + str(sentence) + "\n"
+            ret += str(sentence) + "\n"
+        return ret
+    
+    def visualize(self) -> str:
+        ret = ""
+        for r in self.roots:
+            ret += f"{r.visualize()}\n\n"
+            
         return ret
         
 class Agenda:

@@ -1,6 +1,7 @@
 from nltk.corpus import wordnet as wn
 from chart.bottom_up_parser import build_tree
 
+
 if __name__ == "__main__":
     # lst = wn.synsets('morning')
     # for i in range(len(lst)):
@@ -13,4 +14,5 @@ if __name__ == "__main__":
     #     print(i)
     
     complete_tree = build_tree("Book that flight")
-    print(complete_tree)
+    # print(complete_tree)
+    print(complete_tree.visualize())

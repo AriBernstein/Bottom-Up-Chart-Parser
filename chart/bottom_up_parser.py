@@ -64,7 +64,7 @@ def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
             # 1. if start location of last-added complete arc in subsequence is immediately after
             #    end location of this_arc
             # 2. if active_arc is looking for a complete arc of the same pos as this_arc
-            if active_arc.expected_pos() == current_complete_arc.get_pos():
+            if active_arc.next_expected_pos() == current_complete_arc.get_pos():
                 prev_end_index = active_arc.end_index()
                 
                 # Changes complete_arc.end_index() return
