@@ -1,11 +1,25 @@
-from part_of_speech import PartOfSpeech as pos
+from pos_constants import PartOfSpeechConstants as pos
+
+"""
+Constants which represent valid orderings for every type of phrase as a context-
+free grammar. 
+"""
 
 class Ordering:
-    def __init__(self, part_of_speech:pos, valid_orderings: list[list[pos]]=None, word:bool=True, composite:bool = False) -> None:
+    def __init__(self, part_of_speech:pos, 
+                 valid_orderings: list[list[pos]]=None, word:bool=True) -> None:
+        """
+        Args:
+            part_of_speech (pos): The part of speech validated by these 
+                orderings
+            valid_orderings (list[list[pos]], optional): ordered lists of pos   
+                objects which validate part_of_speech 
+            word (bool, optional): If true, then this ordering represents only
+                one word and as such has no subsequence.
+        """
         self.valid_orderings = valid_orderings
         self.pos = part_of_speech
         self.word = word
-        self.composite = composite
         
     def all_orderings(self) -> list[list[pos]]:
         return self.valid_orderings

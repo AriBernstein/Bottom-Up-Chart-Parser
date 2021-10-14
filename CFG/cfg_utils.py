@@ -1,23 +1,36 @@
 import re
 from nltk.corpus import wordnet as wn
 
-from part_of_speech import PartOfSpeech as pos
+from pos_constants import PartOfSpeechConstants as pos
 from cfg.cfg import RULES_DICT
 from cfg.word_constants import aux_verbs, modal_verbs, determiners, \
                            pronouns, prepositions
 
 
 def get_parts_of_speech(word:str) -> set:
-    # n    noun 
-    # v    verb 
-    # a    adjective 
-    # s    adjective satellite 
-    # r    adverb
-    # x    auxillary verb
-    # m    modal verb
-    # d    determiner
-    # p    pronoun
+    """[summary]
 
+    Args:
+        word (str): [description]
+
+    Raises:
+        Exception: [description]
+
+    Returns:
+        set: [description]
+    
+    Note: wordnet returns word POS values as:
+        n    noun 
+        v    verb 
+        a    adjective 
+        s    adjective satellite 
+        r    adverb
+        x    auxillary verb
+        m    modal verb
+        d    determiner
+        p    pronoun
+    
+    """
     word_data = wn.synsets(word)
     part_of_speech_set = set()
     
@@ -56,7 +69,7 @@ def get_parts_of_speech(word:str) -> set:
 
 
 def lower_case_plain_text(phrase_str:str) -> str:
-    return re.sub(r"[:;!?/,]", "", phrase_str).lower()
+    return re.sub(r"[:;!?/.,]", "", phrase_str).lower()
 
 
 def phrase_string_to_word_list(phrase_str:str) -> list[str]:

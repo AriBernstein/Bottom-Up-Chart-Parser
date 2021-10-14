@@ -1,7 +1,7 @@
 from enum import Enum
 import re
 
-class PartOfSpeech(Enum):
+class PartOfSpeechConstants(Enum):
     SENTENCE = "sentence"
     NOUN = 'noun'
     NOUN_PHRASE = 'noun_phrase'
