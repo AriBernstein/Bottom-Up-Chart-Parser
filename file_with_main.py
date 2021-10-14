@@ -13,6 +13,6 @@ if __name__ == "__main__":
     # for i in pe:
     #     print(i)
     
-    complete_tree = build_tree("Book that flight")
+    complete_tree = build_tree("They walk to school.")
     # print(complete_tree)
     print(complete_tree.visualize())

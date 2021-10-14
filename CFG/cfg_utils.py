@@ -4,7 +4,7 @@ from nltk.corpus import wordnet as wn
 from part_of_speech import PartOfSpeech as pos
 from cfg.cfg import RULES_DICT
 from cfg.word_constants import aux_verbs, modal_verbs, determiners, \
-                           pronouns
+                           pronouns, prepositions
 
 
 def get_parts_of_speech(word:str) -> set:
@@ -32,6 +32,9 @@ def get_parts_of_speech(word:str) -> set:
         
     if word in pronouns:
         part_of_speech_set.add(pos.PRONOUN)
+        
+    if word in prepositions:
+        part_of_speech_set.add(pos.PREPOSITION)
 
     for i in word_data:
         p = str(i.pos())
