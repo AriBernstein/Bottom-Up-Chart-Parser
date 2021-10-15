@@ -1,5 +1,5 @@
 from nltk.corpus import wordnet as wn
-from chart.bottom_up_parser import build_tree
+from parse_tree.bottom_up_parser import build_tree
 
 
 if __name__ == "__main__":

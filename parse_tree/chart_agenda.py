@@ -1,6 +1,6 @@
 from collections import deque
 
-from chart.arc import CompleteArc, ActiveArc
+from parse_tree.arc import CompleteArc, ActiveArc
 from pos_constants import PartOfSpeechConstants as pos
 
 class Chart:

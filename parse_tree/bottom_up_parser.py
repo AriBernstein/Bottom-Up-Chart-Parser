@@ -1,7 +1,7 @@
 from cfg.cfg import POS_PHRASE_SET
 from cfg.cfg_utils import phrase_string_to_word_list, get_parts_of_speech
-from chart.chart_agenda import Agenda, Chart
-from chart.arc import ActiveArc, CompleteArc
+from parse_tree.chart_agenda import Agenda, Chart
+from parse_tree.arc import ActiveArc, CompleteArc
 
 def _get_initial_agenda(sentence:str) -> Agenda:    
     starting_arcs = []
@@ -42,13 +42,14 @@ def _active_arcs_starting_with(initial_arc:CompleteArc) -> list[ActiveArc]:
 def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
     """
     Takes a newly-completed arc from the agenda and uses it to:
-        1. Create new active arcs which start with the POS of 
-           the newly-completed arc.
+        1. Bottom-up arc addition - create new active arcs which start with the
+           POS of the newly-completed arc.
         
-        2. Continue to populate the subsequences of active arcs.
+        2. Active Arc extension - continue to populate the subsequences of
+           active arcs.
         
-        3. Complete arcs during steps 1 and/or 2, and add them to the
-           agenda.
+        3. Arc completion - for all of the Complete Arcs created during steps 1
+           and/or 2, and add them to the agenda.
     
     Args:
         agenda (Agenda): stack of newly-created complete arcs
@@ -92,13 +93,22 @@ def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
            
     
 def build_tree(sentence:str) -> Chart:
-    """[summary]
+    """
+    Given the string prepresentation of a sentence, break it down into terminal
+    CompleteArcs, create the initial Agenda using new CompleteArcs, and use this
+    to iteratively populate a chart. Stop when every possible CompleteArc has
+    been found.
 
     Args:
         sentence (str): Input sentence to be parsed into parse tree.
 
+    Raises:
+        exception: If, after discovering every possible CompleteArc, cannot find
+                   one which spans the entire sentence.
+
     Returns:
-        Chart: [description]
+        Chart: a populated chart whose roots represent interpretations of the
+               parse tree for sentence.
     """
     agenda = _get_initial_agenda(sentence)
     chart = Chart(sentence)
@@ -109,7 +119,4 @@ def build_tree(sentence:str) -> Chart:
     if chart.has_root():
         return chart
     else:
-        print (chart._sentence_lst)
-        for k in chart.complete_starts.keys():
-            print(f"{k} - {chart.complete_starts[k]}")
         raise Exception("Could not find root for parse tree.")

@@ -1,6 +1,6 @@
 from cfg.cfg_utils import get_pos_ordering
 from pos_constants import PartOfSpeechConstants as pos
-from chart.arc_visualizer import visualize_complete_arc_tree
+from parse_tree.arc_visualizer import visualize_complete_arc_tree
 
 class CompleteArc:
     """
