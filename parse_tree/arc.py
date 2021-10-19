@@ -63,9 +63,9 @@ class CompleteArc:
     
     def __str__(self) -> str:
         if not self._leaf:
-            return f"{str(self._pos).upper()} {self._subsequence_pos_ordering}"
+            return f"{str(self._pos).upper()} ({self.start_index()} : {self.end_index()}) {self._subsequence_pos_ordering}"
         else:
-            return f"{str(self._pos).upper()} {self._words}"
+            return f"{str(self._pos).upper()} ({self.start_index()}) {self._words}"
         
     def __repr__(self) -> str:
         return str(self)
@@ -106,6 +106,16 @@ class ActiveArc:
         self._subsequence_pos_ordering = get_pos_ordering(pos, ordering_index)
         self._subsequence = [None] * len(self._subsequence_pos_ordering)
         self._subsequence_index = 0
+
+    def copy(self):
+        duplicate_arc = ActiveArc(
+            self._pos, 
+            self._ordering_index,
+            self._start_index)
+        duplicate_arc._subsequence = self._subsequence.copy()
+        duplicate_arc._subsequence_pos_ordering = self._subsequence_pos_ordering 
+        duplicate_arc._subsequence_index = self._subsequence_index
+        return duplicate_arc
 
     def get_pos(self) -> pos:
         return self._pos
@@ -158,8 +168,8 @@ class ActiveArc:
             bool: true if the subsequence of this arc is fully populated and it
                 is ready to be converted into a CompleteArc. False otherwise.
         """
-        # return self._subsequence_index == len(self._subsequence_pos_ordering)
-        return self._subsequence[0] != None and self._subsequence[-1] != None
+        return self._subsequence_index == len(self._subsequence_pos_ordering)
+        # return self._subsequence[0] != None and self._subsequence[-1] != None
         
     def make_complete(self, sentence:list[str]) -> CompleteArc:
         """
@@ -182,7 +192,7 @@ class ActiveArc:
                                     self._ordering_index, 
                                     self._subsequence_pos_ordering)
         return completed_arc
-        
+    
     def __str__(self) -> str:
         return f"POS: {self._pos} - Ordering: {self._ordering_index} - \
             Location: {self._subsequence_index}"

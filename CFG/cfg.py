@@ -26,12 +26,13 @@ class Ordering:
     
     def get_order(self, index:int):
         return self.valid_orderings[index]
-    
+
+
 class Opt: # Optional
     def __init__(self, order:Ordering, optional:bool=True) -> None:
         self.order = order
         self.optional = optional
-        
+
 RULES_DICT = {}
 POS_WORD_SET = set()
 POS_PHRASE_SET = set()

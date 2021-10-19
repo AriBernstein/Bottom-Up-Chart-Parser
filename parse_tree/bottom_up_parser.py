@@ -75,13 +75,18 @@ def _generate_arcs(agenda:Agenda, chart:Chart) -> None:
         for active_arc in chart.incomplete_ends[cur_complete_arc.start_index() - 1].copy():
             
             if active_arc.next_expected_pos() == cur_complete_arc.get_pos():
+                
+                ##############################################
+                active_arc = active_arc.copy()
+                ##############################################
+                
                 prev_end_index = active_arc.end_index()
                 
                 # Changes complete_arc.end_index() return
                 active_arc.add_to_subsequence(cur_complete_arc)
                 
                 if active_arc.validate():
-                    chart.remove_active_arc(active_arc, prev_end_index)
+                    # chart.remove_active_arc(active_arc, prev_end_index)
                     newly_completed_arc = active_arc.make_complete(chart._sentence_lst)
                     newly_completed_arcs.add(newly_completed_arc)
                 else:
@@ -115,6 +120,10 @@ def build_tree(sentence:str) -> Chart:
     
     while not agenda.empty():
         _generate_arcs(agenda, chart)
+    
+    #######################
+    for i in range(chart._num_words):
+        print(str(i), " : " , chart.complete_starts[i])
 
     if chart.has_root():
         return chart

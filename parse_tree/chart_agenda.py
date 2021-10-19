@@ -76,8 +76,7 @@ class Chart:
         """
         self.complete_starts[arc.start_index()].add(arc)
         self.complete_ends[arc.end_index()].add(arc)
-        if arc.get_pos() == pos.SENTENCE and \
-            arc.start_index() == 0 and arc.end_index() == self._num_words - 1:
+        if arc.start_index() == 0 and arc.end_index() == self._num_words - 1:
             self.add_root(arc)
     
     def add_active_arc(self, arc: ActiveArc) -> None:
@@ -101,20 +100,23 @@ class Chart:
             arc (ActiveArc): the arc to move
             old_end_index (int): the key in incomplete_ends at which to find arc
         """
-        self.incomplete_ends[old_end_index].remove(arc)
+        #################################################
+        # self.incomplete_ends[old_end_index].remove(arc)
+        #################################################
         self.incomplete_ends[arc.end_index()].add(arc)
         
-    def remove_active_arc(self, arc: ActiveArc, end_index:int):
-        """
-        Once validated, we can remove the "completed" ActiveArc from the 
-        incomplete arc dictionaries
+    # def remove_active_arc(self, arc: ActiveArc, end_index:int):
+    #     """
+    #     Once validated, we can remove the "completed" ActiveArc from the 
+    #     incomplete arc dictionaries
         
-        Args:
-            arc (ActiveArc): the arc to remove
-            end_index (int): the key in incomplete_ends at which to find arc
-        """
-        self.incomplete_starts[arc.start_index()].remove(arc)
-        self.incomplete_ends[end_index].remove(arc)
+    #     Args:
+    #         arc (ActiveArc): the arc to remove
+    #         end_index (int): the key in incomplete_ends at which to find arc
+    #     """
+    #     self.incomplete_starts[arc.start_index()].remove(arc)
+
+    #     self.incomplete_ends[end_index].remove(arc)
     
     def visualize(self, simple:bool = False) -> str:
         """

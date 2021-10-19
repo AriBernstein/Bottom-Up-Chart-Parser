@@ -15,7 +15,7 @@ determiners = set(
      "more", "such", "your"])
 
 pronouns = set(
-    ["I", "we", "you", "he", "she", "it", "they", "me", "us", "you",
+    ["i", "we", "you", "he", "she", "it", "they", "me", "us", "you",
      "her", "him", "it", "them"])
 
 relative_pronouns = set(
