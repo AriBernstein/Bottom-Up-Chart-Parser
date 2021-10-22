@@ -89,34 +89,18 @@ class Chart:
         self.incomplete_starts[arc.start_index()].add(arc)
         self.incomplete_ends[arc.end_index()].add(arc)
         
-    def update_active_arc(self, arc: ActiveArc, old_end_index:int):
+    def update_active_arc(self, new_arc_state: ActiveArc):
         """
-        Moves reference to arc from set at incomplete_ends[old_end_index] to
-        to the set at incomplete_ends[arc.end_index()]. Only ever called after 
-        arc has been updated (which will update the return value of calls to its
-        end_index method). 
+        Given a new state of an activeArc (ie. an existing active arc with a new
+        element in its subsequence), add to the incomplete_ends.
+        
+        Note that it is not necessary to update incomplete_starts as the initial
+        CompleteArc in the subsequence gives us the information we need. 
 
         Args:
-            arc (ActiveArc): the arc to move
-            old_end_index (int): the key in incomplete_ends at which to find arc
+            new_arc_state (ActiveArc): a new state of an existing active arc.
         """
-        #################################################
-        # self.incomplete_ends[old_end_index].remove(arc)
-        #################################################
-        self.incomplete_ends[arc.end_index()].add(arc)
-        
-    # def remove_active_arc(self, arc: ActiveArc, end_index:int):
-    #     """
-    #     Once validated, we can remove the "completed" ActiveArc from the 
-    #     incomplete arc dictionaries
-        
-    #     Args:
-    #         arc (ActiveArc): the arc to remove
-    #         end_index (int): the key in incomplete_ends at which to find arc
-    #     """
-    #     self.incomplete_starts[arc.start_index()].remove(arc)
-
-    #     self.incomplete_ends[end_index].remove(arc)
+        self.incomplete_ends[new_arc_state.end_index()].add(new_arc_state)
     
     def visualize(self, simple:bool = False) -> str:
         """
