@@ -15,5 +15,5 @@ if __name__ == "__main__":
     # for i in pe:
     #     print(i)
     
-    complete_tree = build_tree("I ran a car.")
+    complete_tree = build_tree("I give you a gift.")
     print(complete_tree.visualize(simple=True))
