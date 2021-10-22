@@ -1,28 +1,26 @@
 # Python Implementation of a Bottom-Up-Chart-Parser
 
-Given a valid English sentence, the bottom up chart parser will use the CFG to
-construct a parse tree from it from the bottom up.
+Given a valid English sentence, the bottom up chart parser will use the context-free grammar to construct a parse tree starting at its leaves and ending at its root.
 
 ## Methodology:
 ### Context-Free Grammar (CFG):
-A CFG is a set of recursively-defined (in terms of each other variables that represent the rules for the language. Each variable is a key-pair value; the key represents a POS; the pair an ordered sequence of POSs that make up the POS of the key. Some rules are terminal; they have no children and generally represent a single word.
+A context-free grammar is a set of recursively-defined rules, each representing a *variation* of a part of speech. Each rule is a key-pair value; the key represents a POS; the pair an ordered sequence of POSs that *validate* the POS of the key (in arc-form, these sequences are referred to as subsequences). Some rules are terminal; they have no children and generally represent a single word, and as such do not have sequences. For non-terminal rules, there is a one to many relationship between POSs and validating ordered sequences. In other words, in most CFGs designed to represent English, there will be multiple rules for the same POS, each correlating with a unique validating sequence.
 
 ### Chart Parsing:
-Chart parsing is the process of converting a sentence into one or many parse trees. Parse tree nodes correlate to CFG rules. Each node is contains a POS and ordered list of children. The number of children is equal to the number of POSs in the ordered sequence of its rule. Leaves have no children and represent individual words (terminal parts of speech).
+Chart parsing is the process of converting a sentence into one or many parse trees. Parse tree nodes correlate to CFG rules. Each node is contains a POS and ordered list of children (referred to as its subsequence). The number of children is equal to the number of POSs in the ordered sequence of its rule. Leaves have no children and represent individual words (terminal CFG rules).
 
 Given a CFG, there are two primary methods for parsing a phrase into a parse tree: top-down chart parsing and bottom-up chart parsing. Bottom-up chart parsing builds the tree beginning with the leaves and ending at the root. While less intuitive than top-down parsing, it is known to be faster and avoids issues like left-recursion.
 
 ## Implementation:
 
 ### Some terminology:
-- **Arc:** A structure which represents a substring in the initial sentence in the context of a specific grammar rule. Arcs can be either complete or active.
+- **Arc:** A structure which represents a substring in the initial sentence in the context of a specific grammar rule. Arcs can be either complete or active. Note: complete arcs can be used as nodes in the parse tree.
     - Complete Arc: an arc which represents a grammar rule that is known to exist over a substring of the input sentence (ie. its subsequence is populated). Complete arcs are used when constructing Active Arcs.
     - Active Arc: an arc which represents a grammar rule for which some of its subsequence has been discovered.
 - **Chart:** A structure which stores, for a given sentence, all possible parse trees as well as all discovered parts of speech that did not make it into rooted trees.
     - Rooted Tree: A Complete Arc which spans the entire sentence and is of POS sentence.
 - **Agenda:** A stack which temporarily stores newly-completed arcs. It is used to avoid repetition. 
 - **Word-index:** Given a sentence in the form of an ordered list such that each element represents a word in the string, a word-index means the location of a given word in its greater sentence.
-
 
 
 ### pos_constants.py
